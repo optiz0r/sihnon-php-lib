@@ -5,6 +5,12 @@ class Sihnon_Database {
     private $config;
     private $dbh;
 
+    /**
+     * Associative array of connection parameters for the database configuration
+     * @var array(string=>string)
+     */
+    private $database_config;
+    
     private $hostname;
     private $username;
     private $password;
@@ -12,13 +18,14 @@ class Sihnon_Database {
 
     private $prepared_statements = array();
 
-    public function __construct(Sihnon_Config $config) {
-        $this->config   = $config;
-
-        $this->hostname = $this->config->getDatabase('hostname');
-        $this->username = $this->config->getDatabase('username');
-        $this->password = $this->config->getDatabase('password');
-        $this->dbname   = $this->config->getDatabase('dbname');
+    public function __construct($dbconfig) {
+        $this->database_cconfig = parse_ini_file($dbconfig);
+        var_dump($this->database_config);
+        
+        $this->hostname = $this->getDatabaseConfig('hostname');
+        $this->username = $this->getDatabaseConfig('username');
+        $this->password = $this->getDatabaseConfig('password');
+        $this->dbname   = $this->getDatabaseConfig('dbname');
 
         try {
             $this->dbh  = new PDO("mysql:host={$this->hostname};dbname={$this->dbname}", $this->username, $this->password);
@@ -30,6 +37,19 @@ class Sihnon_Database {
 
     public function __destruct() {
         $this->dbh = null;
+    }
+    
+    /**
+     * Returns the value of the named item from the database configuration file
+     *
+     * @param string $key Name of the setting to retrieve
+     */
+    private function getDatabaseConfig($key) {
+        if (!isset($this->database_config[$key])) {
+            throw new Sihnon_Exception_DatabaseConfigMissing($key);
+        }
+
+        return $this->database_config[$key];
     }
 
     public function selectAssoc($sql, $key_col, $value_cols) {

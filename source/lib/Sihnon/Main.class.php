@@ -1,25 +1,36 @@
 <?php
 
 class Sihnon_Main {
-
-    private static $instance;
-
-    private $config;
-    private $database;
-    private $log;
-    private $cache;
     
-    private $base_uri;
+    protected static $instance;
 
-    private function __construct() {
-        $this->config   = new Sihnon_Config(Sihnon_DBConfig);
-        $this->database = new Sihnon_Database($this->config);
-        $this->config->setDatabase($this->database);
+    protected $config;
+    protected $database;
+    protected $log;
+    protected $cache;
+    
+    protected $base_uri;
 
-        $this->log      = new Sihnon_Log($this->database, $this->config, Sihnon_Log_Table);
-        $this->cache    = new Sihnon_Cache($this->config);
-        
+    protected function __construct() {
         $this->base_uri = dirname($_SERVER['SCRIPT_NAME']) . '/';
+    }
+    
+    protected function init() {
+        if (Sihnon_DatabaseSupport) {
+            $this->database = new Sihnon_Database(Sihnon_DBConfig);
+        }
+
+        $this->config = new Sihnon_Config(Sihnon_ConfigPlugin, array(
+        	'database' => $this->database,
+        	'table' => Sihnon_ConfigTable, 
+        	'filename' => Sihnon_ConfigFile)
+        );
+        
+        $this->log    = new Sihnon_Log($this->config->get('logging.plugin'), array(
+        	'database' => $this->database)
+        );
+                
+        $this->cache  = new Sihnon_Cache($this->config);
     }
 
     /**
@@ -29,6 +40,7 @@ class Sihnon_Main {
     public static function instance() {
         if (!self::$instance) {
             self::$instance = new Sihnon_Main();
+            self::$instance->init();
         }
 
         return self::$instance;
@@ -108,6 +120,18 @@ class Sihnon_Main {
         // If this file exists, load it
         if (file_exists($filename)) {
             require_once $filename;
+        }
+    }
+    
+    /**
+     * Throws an exception if the requested name has not been defined.
+     * 
+     * @param string $name Name of the definition to check for the existence of
+     * @throws Sihnon_Exception_MissingDefinition
+     */
+    public static function ensureDefined($name) {
+        if (! defined($name)) {
+            throw new Sihnon_Exception_MissingDefinition($name);
         }
     }
     

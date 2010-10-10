@@ -31,25 +31,13 @@ class Sihnon_Config {
      * @var array(string)
      */
     const TYPE_STRING_LIST = 'array(string)';
-
-    /**
-     * Contents of the dbconfig file 
-     * @var string
-     */
-    private $dbconfig;
     
     /**
-     * Database object created for the lifetime of this script
-     * @var Sihnon_Database
+     * Backend to be used for this Config object
+     * @var Sihnon_Config_IPlugin
      */
-    private $database;
+    private $backend;
 
-    /**
-     * Associative array of connection parameters for the database configuration
-     * @var array(string=>string)
-     */
-    private $databaseConfig = array();
-    
     /**
      * Associative array of settings loaded from the database
      * @var array(string=>array(string=>string))
@@ -59,56 +47,13 @@ class Sihnon_Config {
     /**
      * Constructs a new instance of the Config class
      *
-     * @param string $dbconfig Database configuration file contents
+     * @param string $backend Backend to use for storing and retrieving configuration items
+     * @param mixed $options Parameters to configure the Config backend
      * @return Sihnon_Config
      */
-    public function __construct($dbconfig) {
-        $this->dbconfig = $dbconfig;
-        
-        $this->parseDatabaseConfig();
-    }
-
-    /**
-     * Parses the contents of the database configuration file so that individual settings can be retrieved.
-     *
-     */
-    public function parseDatabaseConfig() {
-        $this->databaseConfig = parse_ini_file($this->dbconfig);
-    }
-
-    /**
-     * Returns the value of the named item from the database configuration file
-     *
-     * @param string $key Name of the setting to retrieve
-     */
-    public function getDatabase($key) {
-        if (!isset($this->databaseConfig[$key])) {
-            throw new Sihnon_Exception_DatabaseConfigMissing($key);
-        }
-
-        return $this->databaseConfig[$key];
-    }
-
-    /**
-     * Sets the database instance used by this object
-     * 
-     * @param Sihnon_Database $database Database instance
-     */
-    public function setDatabase(Sihnon_Database $database) {
-        $this->database = $database;
-        $this->preload();
-    }
-
-    /**
-     * Loads the entire list of settings from the database
-     * 
-     */
-    private function preload() {
-        if (!$this->database) {
-            throw new Sihnon_Exception_NoDatabaseConnection();
-        }
-
-        $this->settings = $this->database->selectAssoc('SELECT name,type,value FROM settings', 'name', array('name', 'value', 'type'));
+    public function __construct($backend, $options) {
+        $this->backend = Sihnon_Config_PluginFactory::create($backend, $options);
+        $this->settings = $this->backend->preload();
     }
 
     /**

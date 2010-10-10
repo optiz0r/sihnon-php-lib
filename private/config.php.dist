@@ -11,22 +11,53 @@
 define('Sihnon_Lib', '../lib/');
 
 /**
+ * Sihnon Database Support
+ *
+ * Specifies whether or not to include database support in the Framework
+ *
+ * @var bool
+ */
+define('Sihnon_DatabaseSupport', false);
+
+/**
  * Sihnon Database Configuration
  * 
- * Specifies the absolute or relative path to the Sihnon database configuration file. 
+ * Specifies the absolute or relative path to the Sihnon database configuration file, required when Database support is enabled.
  * This is a standard ini type file, containing the config required to connect to the database.
  * 
  * @var string
  */
-define('Sihnon_DBConfig', '../dbconfig.conf');
+define('Sihnon_DBConfig', '../private/dbconfig.conf');
 
 /**
- * Sihnon Log Table
- *
- * Specifies the name of the database table used to store log entries for this application.
+ * Sihnon Config Plugin
+ * 
+ * Specifies the plugin to use for configuration value storage.
+ * Options include:
+ *   - Database (Requires Database Support to be enabled, and the Sihnon_ConfigTable option set)
+ *   - FlatFile (Requires the Sihnon_ConfigFile option set)
  * 
  * @var string
  */
-define('Sihnon_Log_Table', 'logs');
+define('Sihnon_ConfigPlugin', 'FlatFile');
+
+/**
+ * Sihnon Config Table
+ *
+ * Specifies the name of the database table thats used for storing configuration values
+ * when the Database Config Plugin is used.
+ *
+ * @var string
+ */
+define('Sihnon_ConfigTable', 'settings');
+
+/**
+ * Sihnon Config File
+ *
+ * Specifies the name of the file used to store configuration values when the FlatFile Config Plugin is used
+ *
+ * @var string
+ */
+define('Sihnon_ConfigFile', '../private/settings.txt');
 
 ?>

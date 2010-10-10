@@ -2,6 +2,9 @@
 
 class Sihnon_Exception extends Exception {};
 
+class Sihnon_Exception_NotImplemented         extends Sihnon_Exception {};
+class Sihnon_Exception_MissingDefinition      extends Sihnon_Exception {};
+
 class Sihnon_Exception_DatabaseException      extends Sihnon_Exception {};
 class Sihnon_Exception_DatabaseConfigMissing  extends Sihnon_Exception_DatabaseException {};
 class Sihnon_Exception_DatabaseConnectFailed  extends Sihnon_Exception_DatabaseException {};

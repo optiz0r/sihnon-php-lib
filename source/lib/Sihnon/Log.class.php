@@ -9,29 +9,22 @@ class Sihnon_Log {
 
     private static $hostname = '';
     
-    private $database;
-    private $config;
-    private $table;
-
-    public function __construct(Sihnon_Database $database, Sihnon_Config $config, $table) {
-        $this->database = $database;
-        $this->config = $config;
-        $this->table = $table;
-
+    private $backend;
+    private $progname;
+    
+    public function __construct($backend, $options = array(), $progname = '') {
+        $this->progname = $progname;
+        
+        $this->backend = Sihnon_Log_PluginFactory::create($backend, $options);
+        $this->log(self::LEVEL_INFO, "Logging started");
+    }
+    
+    public function __destruct() {
+        $this->log(self::LEVEL_INFO, "Logging shutdown");        
     }
 
-    public function log($severity, $message) {
-        $this->database->insert("INSERT INTO {$this->table} (level,ctime,pid,hostname,progname,line,message) VALUES(:level, :ctime, :pid, :hostname, :progname, :line, :message)",
-            array(
-                array('name' => 'level', 'value' => $severity, 'type' => PDO::PARAM_STR),
-                array('name' => 'ctime', 'value' => time(), 'type' => PDO::PARAM_INT),
-                array('name' => 'pid', 'value' => 0, 'type' => PDO::PARAM_INT),
-                array('name' => 'hostname', 'value' => self::$hostname, 'type' => PDO::PARAM_STR),
-                array('name' => 'progname', 'value' => 'webui', 'type' => PDO::PARAM_STR),
-                array('name' => 'line', 'value' => 0, 'type' => PDO::PARAM_INT),
-                array('name' => 'message', 'value' => $message, 'type' => PDO::PARAM_STR)
-            )
-        );        
+    public function log($level, $message) {
+        $this->backend->log($level, time(), 0, self::$hostname, $this->progname, 0, $message);
     }
 
     public function debug($message) {
