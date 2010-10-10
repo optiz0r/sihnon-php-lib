@@ -1,6 +1,6 @@
 <?php
 
-class Sihnon_ForegroundTask {
+class SihnonFramework_ForegroundTask {
     
     const PIPE_STDIN  = 0;
     const PIPE_STDOUT = 1;

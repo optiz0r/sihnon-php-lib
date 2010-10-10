@@ -4,9 +4,9 @@
  * Base class for all plugins, providing default implementations for 
  * standard plugin methods.
  * 
- * @class Sihnon_PluginBase
+ * @class SihnonFramework_PluginBase
  */
-class Sihnon_PluginBase {
+class SihnonFramework_PluginBase {
     
     /**
      * Provides a basic initialisation function that does nothing.

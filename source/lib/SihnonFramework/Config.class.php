@@ -1,6 +1,6 @@
 <?php
 
-class Sihnon_Config {
+class SihnonFramework_Config {
     
     /**
      * Boolean value type

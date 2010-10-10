@@ -1,10 +1,13 @@
 <?php
 
-class Sihnon_Log_PluginFactory extends Sihnon_PluginFactory {
+class SihnonFramework_Log_PluginFactory extends Sihnon_PluginFactory {
     
-    const PLUGIN_DIR       = 'Sihnon/Log/Plugin/';
-    const PLUGIN_PREFIX    = 'Sihnon_Log_Plugin_';
-    const PLUGIN_INTERFACE = 'Sihnon_Log_IPlugin';
+    protected static $plugin_prefix    = 'Sihnon_Log_Plugin_';
+    protected static $plugin_interface = 'Sihnon_Log_IPlugin';
+    protected static $plugin_dir       = array(
+    	SihnonFramework_Lib => 'SihnonFramework/Log/Plugin/',
+    	Sihnon_Lib          => 'Sihnon/Log/Plugin/',
+	);
     
     public static function init() {
         

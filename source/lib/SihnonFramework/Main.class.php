@@ -1,6 +1,6 @@
 <?php
 
-class Sihnon_Main {
+class SihnonFramework_Main {
     
     protected static $instance;
 
@@ -35,7 +35,7 @@ class Sihnon_Main {
 
     /**
      * 
-     * @return Sihnon_Main
+     * @return SihnonFramework_Main
      */
     public static function instance() {
         if (!self::$instance) {
@@ -48,7 +48,7 @@ class Sihnon_Main {
 
     /**
      * 
-     * @return Sihnon_Config
+     * @return SihnonFramework_Config
      */
     public function config() {
         return $this->config;
@@ -56,7 +56,7 @@ class Sihnon_Main {
 
     /**
      * 
-     * @return Sihnon_Database
+     * @return SihnonFramework_Database
      */
     public function database() {
         return $this->database;
@@ -64,7 +64,7 @@ class Sihnon_Main {
 
     /**
      * 
-     * @return Sihnon_Log
+     * @return SihnonFramework_Log
      */
     public function log() {
         return $this->log;
@@ -72,7 +72,7 @@ class Sihnon_Main {
 
     /**
      * 
-     * @return Sihnon_Cache
+     * @return SihnonFramework_Cache
      */
     public function cache() {
         return $this->cache;
@@ -91,35 +91,74 @@ class Sihnon_Main {
     }
 
     public static function initialise() {
-        spl_autoload_register(array('Sihnon_Main','autoload'));
+        spl_autoload_register(array('SihnonFramework_Main','autoload'));
     }
     
     public static function autoload($classname) {
         // Ensure the classname contains only valid class name characters
         if (!preg_match('/^[A-Z][a-zA-Z0-9_]*$/', $classname)) {
-            throw new Exception('Illegal characters in classname'); // TODO Subclass this exception
+            throw new Exception('Illegal characters in classname');
         }
 
         // Ensure the class to load begins with our prefix
-        if (!preg_match('/^Sihnon_/', $classname)) {
-            return;
-        }
-
-        // Special case: All exceptions are stored in the same file
-        if (preg_match('/^Sihnon_Exception/', $classname)) {
-            require_once(Sihnon_Lib . 'Sihnon/Exceptions.class.php');
-            return;
-        }
-
-        // Replace any underscores with directory separators
-        $filename = Sihnon_Lib . preg_replace('/_/', '/', $classname);
-
-        // Tack on the class file suffix
-        $filename .= '.class.php';
-
-        // If this file exists, load it
-        if (file_exists($filename)) {
-            require_once $filename;
+        if (preg_match('/^SihnonFramework_/', $classname)) {
+            // Special case: all related exceptions are grouped into a single file
+            if (preg_match('/^(Sihnon(?:Framework)?_(?:.*_))Exception/', $classname, $matches = array())) {
+                require_once(Sihnon_Lib . preg_replace('/_/', '/', $matches[1]) . 'Exceptions.class.php');
+                return;
+            }
+                
+            // Replace any underscores with directory separators
+            $filename = SihnonFramework_Lib . preg_replace('/_/', '/', $classname) . '.class.php';
+    
+            // If this file exists, load it
+            if (file_exists($filename)) {
+                require_once $filename;
+                return;
+            }
+        } elseif (preg_match('/^Sihnon_/', $classname)) {
+            // Sihnon_ classes subclass the SihnonFramework_ classes.
+            // If a subclass doesn't exist, create it on the fly
+            
+            // Special case: all related exceptions are grouped into a single file
+            if (preg_match('/^(Sihnon(?:Framework)?_(?:.*_))Exception/', $classname, $matches = array())) {
+                require_once(Sihnon_Lib . preg_replace('/_/', '/', $matches[1]) . 'Exceptions.class.php');
+                return;
+            }
+            
+            // Replace any underscores with directory separators
+            $filename = Sihnon_Lib . preg_replace('/_/', '/', $classname) . '.class.php';
+    
+            // If this file exists, load it
+            if (file_exists($filename)) {
+                require_once $filename;
+                return;
+            } else {
+                // Create this class to extend the Framework parent
+                $parent_classname = preg_replace('/^Sihnon_/', 'SihnonFramework_', $classname);
+                
+                // Determine if the classname represents a class or an interface
+                $parent_class = new ReflectionClass($parent_classname);
+                $class_definition = '';
+                if ($parent_class->isFinal()) {
+                    // Final classes cannot be extended
+                    return;
+                }
+                if ($parent_class->isInterface()) {
+                    $class_definition .= 'interface ';
+                } else {
+                    if ($parent_class->isAbstract()) {
+                        $class_definition .= 'abstract ';
+                    }
+                    
+                    $class_definition .= 'class ';
+                }
+                $class_definition .= "{$classname} extends {$parent_classname} {};";
+                
+                eval($class_definition);
+                
+                return; 
+            }
         }
     }
     
@@ -155,7 +194,7 @@ class Sihnon_Main {
             return $var;
         }
         
-        if (is_string($default) && preg_match('/^Sihnon_Exception/', $default) && class_exists($default) && is_subclass_of($default, Sihnon_Exception)) {
+        if (is_string($default) && preg_match('/^Sihnon(Framework)?_Exception/', $default) && class_exists($default) && is_subclass_of($default, SihnonFramework_Exception)) {
             throw new $default();
         }
         
@@ -191,6 +230,6 @@ class Sihnon_Main {
     
 }
 
-Sihnon_Main::initialise();
+SihnonFramework_Main::initialise();
 
 ?>

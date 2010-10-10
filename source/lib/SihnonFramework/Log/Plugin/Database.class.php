@@ -1,6 +1,6 @@
 <?php
 
-class Sihnon_Log_Plugin_Database extends Sihnon_PluginBase implements Sihnon_Log_IPlugin {
+class SihnonFramework_Log_Plugin_Database extends Sihnon_PluginBase implements Sihnon_Log_IPlugin {
     
     /**
      * Name of this plugin

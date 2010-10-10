@@ -1,6 +1,6 @@
 <?php
 
-interface Sihnon_Config_IPlugin extends Sihnon_IPlugin {
+interface SihnonFramework_Config_IPlugin extends Sihnon_IPlugin {
     
     /**
      * Returns a new instance of the Plugin class

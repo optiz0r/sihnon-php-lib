@@ -1,6 +1,6 @@
 <?php
 
-abstract class Sihnon_LogEntry {
+abstract class SihnonFramework_LogEntry {
 
     protected static $table_name = "";
 

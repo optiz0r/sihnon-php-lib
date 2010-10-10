@@ -1,6 +1,6 @@
 <?php
 
-class Sihnon_Log {
+class SihnonFramework_Log {
     
     const LEVEL_DEBUG   = 'DEBUG';
     const LEVEL_INFO    = 'INFO';
@@ -49,6 +49,6 @@ class Sihnon_Log {
 
 }
 
-Sihnon_Log::initialise();
+SihnonFramework_Log::initialise();
 
 ?>
