@@ -1,6 +1,6 @@
 <?php
 
-class Sihnon_BackgroundTask {
+class SihnonFramework_BackgroundTask {
 
     protected function __construct() {
         

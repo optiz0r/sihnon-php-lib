@@ -1,6 +1,6 @@
 <?php
 
-class Sihnon_Database {
+class SihnonFramework_Database {
 
     private $config;
     private $dbh;

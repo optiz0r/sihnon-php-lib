@@ -1,6 +1,6 @@
 <?php
 
-interface Sihnon_IPluginFactory {
+interface SihnonFramework_IPluginFactory {
 
     public static function init();
     

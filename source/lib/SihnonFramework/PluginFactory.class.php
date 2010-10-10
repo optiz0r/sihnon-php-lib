@@ -1,6 +1,6 @@
 <?php
 
-abstract class Sihnon_PluginFactory implements Sihnon_IPluginFactory {
+abstract class SihnonFramework_PluginFactory implements Sihnon_IPluginFactory {
     
     static private $validPlugins = array();
     
@@ -11,9 +11,9 @@ abstract class Sihnon_PluginFactory implements Sihnon_IPluginFactory {
      */
     public static function scan($force = false) {
         if ($force || ! isset(self::$validPlugins[get_called_class()])) {
-            $candidatePlugins = static::findPlugins(static::PLUGIN_DIR);
+            $candidatePlugins = static::findPlugins(static::$plugin_dir);
             
-            static::loadPlugins($candidatePlugins, static::PLUGIN_PREFIX, static::PLUGIN_INTERFACE);
+            static::loadPlugins($candidatePlugins, static::$plugin_prefix, static::$plugin_interface);
         }
     }
         
@@ -32,14 +32,24 @@ abstract class Sihnon_PluginFactory implements Sihnon_IPluginFactory {
         return array_keys(self::$validPlugins[get_called_class()]);
     }
     
-    protected static function findPlugins($directory) {
+    protected static function findPlugins($directories) {
         $plugins = array();
         
-        $iterator = new Sihnon_Utility_ClassFilesIterator(new Sihnon_Utility_VisibleFilesIterator(new DirectoryIterator(Sihnon_Lib . $directory)));
+        if (! is_array($directories)) {
+            $directories = array(SihnonLib => $directories);
+        }
         
-        foreach ($iterator as /** @var SplFileInfo */ $file) {
-            $plugin = preg_replace('/.class.php$/', '', $file->getFilename());
-            $plugins[] = $plugin;
+        foreach ($directories as $base_dir => $directory) {
+            if (! file_exists($base_dir . $directory)) {
+                continue;
+            }
+            
+            $iterator = new Sihnon_Utility_ClassFilesIterator(new Sihnon_Utility_VisibleFilesIterator(new DirectoryIterator($base_dir . $directory)));
+            
+            foreach ($iterator as /** @var SplFileInfo */ $file) {
+                $plugin = preg_replace('/.class.php$/', '', $file->getFilename());
+                $plugins[] = $plugin;
+            }
         }
         
         return $plugins;

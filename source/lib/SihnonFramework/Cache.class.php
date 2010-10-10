@@ -1,6 +1,6 @@
 <?php
 
-class Sihnon_Cache {
+class SihnonFramework_Cache {
     
     protected $config;
     protected $cache_dir;

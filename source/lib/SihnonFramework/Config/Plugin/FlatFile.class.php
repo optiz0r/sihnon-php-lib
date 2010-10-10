@@ -1,6 +1,6 @@
 <?php
 
-class Sihnon_Config_Plugin_FlatFile extends Sihnon_PluginBase implements Sihnon_Config_IPlugin {
+class SihnonFramework_Config_Plugin_FlatFile extends Sihnon_PluginBase implements Sihnon_Config_IPlugin {
     
     /**
      * Name of this plugin
