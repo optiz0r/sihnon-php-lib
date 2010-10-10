@@ -4,6 +4,15 @@ class SihnonFramework_Main {
     
     protected static $instance;
 
+    protected static $autoload_classes = array(
+        array(
+            'base' => 'SihnonFramework',
+            'base_dir_prefix' => SihnonFramework_Lib,
+            'subclass' => 'Sihnon',
+            'subclass_dir_prefix' => Sihnon_Lib,
+        ),
+    );
+    
     protected $config;
     protected $database;
     protected $log;
@@ -99,67 +108,94 @@ class SihnonFramework_Main {
         if (!preg_match('/^[A-Z][a-zA-Z0-9_]*$/', $classname)) {
             throw new Exception('Illegal characters in classname');
         }
-
-        // Ensure the class to load begins with our prefix
-        if (preg_match('/^SihnonFramework_/', $classname)) {
-            // Special case: all related exceptions are grouped into a single file
-            if (preg_match('/^(Sihnon(?:Framework)?_(?:.*_))Exception/', $classname, $matches = array())) {
-                require_once(Sihnon_Lib . preg_replace('/_/', '/', $matches[1]) . 'Exceptions.class.php');
-                return;
-            }
-                
-            // Replace any underscores with directory separators
-            $filename = SihnonFramework_Lib . preg_replace('/_/', '/', $classname) . '.class.php';
+        
+        foreach (self::$autoload_classes as $class) {
     
-            // If this file exists, load it
-            if (file_exists($filename)) {
-                require_once $filename;
-                return;
-            }
-        } elseif (preg_match('/^Sihnon_/', $classname)) {
-            // Sihnon_ classes subclass the SihnonFramework_ classes.
-            // If a subclass doesn't exist, create it on the fly
-            
-            // Special case: all related exceptions are grouped into a single file
-            if (preg_match('/^(Sihnon(?:Framework)?_(?:.*_))Exception/', $classname, $matches = array())) {
-                require_once(Sihnon_Lib . preg_replace('/_/', '/', $matches[1]) . 'Exceptions.class.php');
-                return;
-            }
-            
-            // Replace any underscores with directory separators
-            $filename = Sihnon_Lib . preg_replace('/_/', '/', $classname) . '.class.php';
-    
-            // If this file exists, load it
-            if (file_exists($filename)) {
-                require_once $filename;
-                return;
-            } else {
-                // Create this class to extend the Framework parent
-                $parent_classname = preg_replace('/^Sihnon_/', 'SihnonFramework_', $classname);
-                
-                // Determine if the classname represents a class or an interface
-                $parent_class = new ReflectionClass($parent_classname);
-                $class_definition = '';
-                if ($parent_class->isFinal()) {
-                    // Final classes cannot be extended
+            // Ensure the class to load begins with our prefix
+            if (preg_match("/^{$class['base']}_/", $classname)) {
+                // Special case: all related exceptions are grouped into a single file
+                if (preg_match("/^({$class['base']}_(?:.*_))Exception/", $classname, $matches = array())) {
+                    require_once($class['base_dir_prefix'] . preg_replace('/_/', '/', $matches[1]) . 'Exceptions.class.php');
                     return;
                 }
-                if ($parent_class->isInterface()) {
-                    $class_definition .= 'interface ';
-                } else {
-                    if ($parent_class->isAbstract()) {
-                        $class_definition .= 'abstract ';
-                    }
                     
-                    $class_definition .= 'class ';
+                // Replace any underscores with directory separators
+                $filename = $class['base_dir_prefix'] . preg_replace('/_/', '/', $classname) . '.class.php';
+        
+                // If this file exists, load it
+                if (file_exists($filename)) {
+                    require_once $filename;
+                    return;
                 }
-                $class_definition .= "{$classname} extends {$parent_classname} {};";
+            } elseif ($class['subclass'] && preg_match("/^{$class['subclass']}_/", $classname)) {
+                // Sihnon_ classes subclass the SihnonFramework_ classes.
+                // If a subclass doesn't exist, create it on the fly
                 
-                eval($class_definition);
+                // Special case: all related exceptions are grouped into a single file
+                if (preg_match("/^({$class['subclass']}_(?:.*_))Exception/", $classname, $matches = array())) {
+                    require_once($class['subclass_dir_prefix'] . preg_replace('/_/', '/', $matches[1]) . 'Exceptions.class.php');
+                    return;
+                }
                 
-                return; 
+                // Replace any underscores with directory separators
+                $filename = $class['subclass_dir_prefix'] . preg_replace('/_/', '/', $classname) . '.class.php';
+        
+                // If this file exists, load it
+                if (file_exists($filename)) {
+                    require_once $filename;
+                    return;
+                } else {
+                    // Create this class to extend the Framework parent
+                    $parent_classname = preg_replace("/^{$class['subclass']}_/", "{$class['base']}_", $classname);
+                    
+                    // Determine if the classname represents a class or an interface
+                    $parent_class = new ReflectionClass($parent_classname);
+                    $class_definition = '';
+                    if ($parent_class->isFinal()) {
+                        // Final classes cannot be extended
+                        return;
+                    }
+                    if ($parent_class->isInterface()) {
+                        $class_definition .= 'interface ';
+                    } else {
+                        if ($parent_class->isAbstract()) {
+                            $class_definition .= 'abstract ';
+                        }
+                        
+                        $class_definition .= 'class ';
+                    }
+                    $class_definition .= "{$classname} extends {$parent_classname} {};";
+                    
+                    eval($class_definition);
+                    
+                    return; 
+                }
             }
         }
+    }
+    
+    /**
+     * Adds additional class names to the autoloader
+     * 
+     * The base name is the prefix of all classes in the base tree. The subclass name is the prefix of all classes from
+     * another tree in which the base classes can be extended. For example, the SihnonFramework and Sihnon class trees.
+     * 
+     * For the base and subclasses, the dir prefix is the top-level directory which contains all the class files.
+     * 
+     * If there are no subclasses, the latter two parameters can be left as null, or unspecified.
+     * 
+     * @param unknown_type $base
+     * @param unknown_type $base_dir_prefix
+     * @param unknown_type $subclass
+     * @param unknown_type $subclass_dir_prefix
+     */
+    public static function registerAutoloadClasses($base, $base_dir_prefix, $subclass = null, $subclass_dir_prefix = null) {
+        self::$autoload_classes[] = array(
+            'base' => $base,
+            'base_dir_prefix' => $base_dir_prefix,
+            'subclass' => $subclass,
+            'subclass_dir_prefix' => $subclass_dir_prefix,
+        );
     }
     
     /**
