@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * Sihnon Library path
+ * 
+ * Specifies the absolute or relative path to the Sihnon library directory, relative to the webui root directory.
+ * Path must end with a trailing slash.
+ * 
+ * @var string
+ */
+define('Sihnon_Lib', '../lib/');
+
+/**
+ * Sihnon Database Configuration
+ * 
+ * Specifies the absolute or relative path to the Sihnon database configuration file. 
+ * This is a standard ini type file, containing the config required to connect to the database.
+ * 
+ * @var string
+ */
+define('Sihnon_DBConfig', '../dbconfig.conf');
+
+/**
+ * Sihnon Log Table
+ *
+ * Specifies the name of the database table used to store log entries for this application.
+ * 
+ * @var string
+ */
+define('Sihnon_Log_Table', 'logs');
+
+?>

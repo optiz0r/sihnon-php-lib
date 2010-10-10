@@ -1,0 +1,5 @@
+hostname = localhost
+username = username
+password = password
+dbname   = database
+
