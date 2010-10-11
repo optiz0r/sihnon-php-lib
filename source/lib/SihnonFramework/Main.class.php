@@ -114,7 +114,7 @@ class SihnonFramework_Main {
             // Ensure the class to load begins with our prefix
             if (preg_match("/^{$class['base']}_/", $classname)) {
                 // Special case: all related exceptions are grouped into a single file
-                if (preg_match("/^({$class['base']}_(?:.*_))Exception/", $classname, $matches = array())) {
+                if (preg_match("/^({$class['base']}_(?:.*?_)?)Exception/", $classname, $matches)) {
                     require_once($class['base_dir_prefix'] . preg_replace('/_/', '/', $matches[1]) . 'Exceptions.class.php');
                     return;
                 }
@@ -124,7 +124,7 @@ class SihnonFramework_Main {
         
                 // If this file exists, load it
                 if (file_exists($filename)) {
-                    require_once $filename;
+                    require_once(realpath($filename));
                     return;
                 }
             } elseif ($class['subclass'] && preg_match("/^{$class['subclass']}_/", $classname)) {
@@ -132,9 +132,16 @@ class SihnonFramework_Main {
                 // If a subclass doesn't exist, create it on the fly
                 
                 // Special case: all related exceptions are grouped into a single file
-                if (preg_match("/^({$class['subclass']}_(?:.*_))Exception/", $classname, $matches = array())) {
-                    require_once($class['subclass_dir_prefix'] . preg_replace('/_/', '/', $matches[1]) . 'Exceptions.class.php');
-                    return;
+                if (preg_match("/^({$class['subclass']}_(?:.*?_)?)Exception/", $classname, $matches)) {
+                    $exceptions_filename = $class['subclass_dir_prefix'] . preg_replace('/_/', '/', $matches[1]) . 'Exceptions.class.php'; 
+                    if (file_exists($exceptions_filename)) {
+                        require_once($exceptions_filename);
+                    } else {
+                        // Create this class to extend the Framework parent
+                        $parent_classname = preg_replace("/^{$class['subclass']}_/", "{$class['base']}_", $classname);
+                        class_alias($parent_classname, $classname);
+                        return;
+                    }
                 }
                 
                 // Replace any underscores with directory separators
@@ -142,32 +149,12 @@ class SihnonFramework_Main {
         
                 // If this file exists, load it
                 if (file_exists($filename)) {
-                    require_once $filename;
+                    require_once(realpath($filename));
                     return;
                 } else {
                     // Create this class to extend the Framework parent
                     $parent_classname = preg_replace("/^{$class['subclass']}_/", "{$class['base']}_", $classname);
-                    
-                    // Determine if the classname represents a class or an interface
-                    $parent_class = new ReflectionClass($parent_classname);
-                    $class_definition = '';
-                    if ($parent_class->isFinal()) {
-                        // Final classes cannot be extended
-                        return;
-                    }
-                    if ($parent_class->isInterface()) {
-                        $class_definition .= 'interface ';
-                    } else {
-                        if ($parent_class->isAbstract()) {
-                            $class_definition .= 'abstract ';
-                        }
-                        
-                        $class_definition .= 'class ';
-                    }
-                    $class_definition .= "{$classname} extends {$parent_classname} {};";
-                    
-                    eval($class_definition);
-                    
+                    class_alias($parent_classname, $classname);
                     return; 
                 }
             }
@@ -190,6 +177,14 @@ class SihnonFramework_Main {
      * @param unknown_type $subclass_dir_prefix
      */
     public static function registerAutoloadClasses($base, $base_dir_prefix, $subclass = null, $subclass_dir_prefix = null) {
+        // The paths must end with a trailing slash
+        if ($base_dir_prefix && $base_dir_prefix[strlen($base_dir_prefix) - 1] != DIRECTORY_SEPARATOR) {
+            $base_dir_prefix .= DIRECTORY_SEPARATOR;
+        }
+        if ($subclass_dir_prefix && $subclass_dir_prefix[strlen($subclass_dir_prefix) - 1] != DIRECTORY_SEPARATOR) {
+            $subclass_dir_prefix .= DIRECTORY_SEPARATOR;
+        }
+        
         self::$autoload_classes[] = array(
             'base' => $base,
             'base_dir_prefix' => $base_dir_prefix,
@@ -208,6 +203,11 @@ class SihnonFramework_Main {
         if (! defined($name)) {
             throw new Sihnon_Exception_MissingDefinition($name);
         }
+    }
+    
+    public static function makeAbsolutePath($relative_path) {
+        $absolute_path = getcwd() . DIRECTORY_SEPARATOR . $relative_path;
+        return realpath($absolute_path);
     }
     
     public static function mkdir_recursive($directory, $permissions=0777) {
