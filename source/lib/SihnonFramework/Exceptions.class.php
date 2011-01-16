@@ -21,4 +21,6 @@ class SihnonFramework_Exception_CacheObjectNotFound    extends SihnonFramework_E
 
 class SihnonFramework_Exception_InvalidPluginName      extends SihnonFramework_Exception {};
 
+class SihnonFramework_Exception_FileNotFound           extends SihnonFramework_Exception {};
+
 ?>

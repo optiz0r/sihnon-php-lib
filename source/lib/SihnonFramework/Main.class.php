@@ -185,12 +185,12 @@ class SihnonFramework_Main {
             $subclass_dir_prefix .= DIRECTORY_SEPARATOR;
         }
         
-        self::$autoload_classes[] = array(
+        array_unshift(self::$autoload_classes, array(
             'base' => $base,
             'base_dir_prefix' => $base_dir_prefix,
             'subclass' => $subclass,
             'subclass_dir_prefix' => $subclass_dir_prefix,
-        );
+        ));
     }
     
     /**
@@ -262,6 +262,25 @@ class SihnonFramework_Main {
         }
 
         return $result;
+    }
+    
+    public static function formatFilesize($bytes) {
+        if (is_null($bytes)) {
+            return 'unknown';
+        }
+        
+        $labels = array('B', 'KB', 'MB', 'GB', 'TB');
+        $limits = array(1, 1024, 1024*1024, 1024*1024*1024, 1024*1024*1024*1024);
+        
+        $size = $bytes;
+        $ptr = count($labels) - 1;
+        while ($ptr >= 0 && $bytes < $limits[$ptr]) {
+            --$ptr;
+        }
+        
+        $size = round($bytes / $limits[$ptr], 2) . ' ' . $labels[$ptr];
+        
+        return $size;
     }
     
 }
