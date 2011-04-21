@@ -36,7 +36,7 @@ abstract class SihnonFramework_PluginFactory implements Sihnon_IPluginFactory {
         $plugins = array();
         
         if (! is_array($directories)) {
-            $directories = array(SihnonLib => $directories);
+            $directories = array(Sihnon_Lib => $directories);
         }
         
         foreach ($directories as $base_dir => $directory) {

@@ -8,6 +8,12 @@ class SihnonFramework_Exception_AlreadyInitialisted    extends SihnonFramework_E
 class SihnonFramework_Exception_NotImplemented         extends SihnonFramework_Exception {};
 class SihnonFramework_Exception_MissingDefinition      extends SihnonFramework_Exception {};
 
+class SihnonFramework_Exception_TemplateException      extends SihnonFramework_Exception {};
+class SihnonFramework_Exception_AbortEntirePage        extends SihnonFramework_Exception_TemplateException {}; 
+class SihnonFramework_Exception_Unauthorized           extends SihnonFramework_Exception_TemplateException {};
+class SihnonFramework_Exception_FileNotFound           extends SihnonFramework_Exception_TemplateException {};
+class SihnonFramework_Exception_InvalidParameters      extends SihnonFramework_Exception_TemplateException {};
+
 class SihnonFramework_Exception_DatabaseException      extends SihnonFramework_Exception {};
 class SihnonFramework_Exception_DatabaseConfigMissing  extends SihnonFramework_Exception_DatabaseException {};
 class SihnonFramework_Exception_DatabaseConnectFailed  extends SihnonFramework_Exception_DatabaseException {};
@@ -24,6 +30,5 @@ class SihnonFramework_Exception_CacheObjectNotFound    extends SihnonFramework_E
 
 class SihnonFramework_Exception_InvalidPluginName      extends SihnonFramework_Exception {};
 
-class SihnonFramework_Exception_FileNotFound           extends SihnonFramework_Exception {};
 
 ?>

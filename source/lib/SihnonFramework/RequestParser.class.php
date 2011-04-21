@@ -73,7 +73,7 @@ class SihnonFramework_RequestParser {
     }
 
     public function exists($key) {
-        return isset($this->vars[$key]);
+        return array_key_exists($key, $this->vars);
     }
 
     public function get($key, $default = null) {
@@ -81,7 +81,7 @@ class SihnonFramework_RequestParser {
             return $this->vars[$key];
         }
         
-        if (is_string($default) && preg_match('/^[a-zA-Z_]+_Exception/', $default) && class_exists($default) && is_subclass_of($default, SihnonFramework_Exception)) {
+        if (is_string($default) && preg_match('/^[a-zA-Z_]+_Exception/', $default) && class_exists($default) && is_subclass_of($default, 'SihnonFramework_Exception')) {
             throw new $default();
         }
 

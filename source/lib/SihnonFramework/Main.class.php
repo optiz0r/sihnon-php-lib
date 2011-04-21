@@ -116,7 +116,10 @@ class SihnonFramework_Main {
             if (preg_match("/^{$class['base']}_/", $classname)) {
                 // Special case: all related exceptions are grouped into a single file
                 if (preg_match("/^({$class['base']}_(?:.*?_)?)Exception/", $classname, $matches)) {
-                    require_once($class['base_dir_prefix'] . preg_replace('/_/', '/', $matches[1]) . 'Exceptions.class.php');
+                    $exceptions_filename = $class['base_dir_prefix'] . preg_replace('/_/', '/', $matches[1]) . 'Exceptions.class.php';
+                    if (file_exists($exceptions_filename)) {
+                        require_once($exceptions_filename);
+                    }
                     return;
                 }
                     
@@ -231,7 +234,7 @@ class SihnonFramework_Main {
             return $var;
         }
         
-        if (is_string($default) && preg_match('/^Sihnon(Framework)?_Exception/', $default) && class_exists($default) && is_subclass_of($default, SihnonFramework_Exception)) {
+        if (is_string($default) && preg_match('/^Sihnon(Framework)?_Exception/', $default) && class_exists($default) && is_subclass_of($default, 'SihnonFramework_Exception')) {
             throw new $default();
         }
         
