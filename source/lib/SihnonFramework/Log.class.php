@@ -16,7 +16,6 @@ class SihnonFramework_Log {
         $this->progname = $progname;
         
         $this->backend = Sihnon_Log_PluginFactory::create($backend, $options);
-        $this->log(self::LEVEL_INFO, "Logging started");
     }
     
     public function log($level, $message) {
