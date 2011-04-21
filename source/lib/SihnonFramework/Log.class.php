@@ -19,10 +19,6 @@ class SihnonFramework_Log {
         $this->log(self::LEVEL_INFO, "Logging started");
     }
     
-    public function __destruct() {
-        $this->log(self::LEVEL_INFO, "Logging shutdown");        
-    }
-
     public function log($level, $message) {
         $this->backend->log($level, time(), 0, self::$hostname, $this->progname, 0, $message);
     }

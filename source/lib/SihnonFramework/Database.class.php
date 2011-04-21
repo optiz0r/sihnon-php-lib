@@ -19,8 +19,11 @@ class SihnonFramework_Database {
     private $prepared_statements = array();
 
     public function __construct($dbconfig) {
-        $this->database_cconfig = parse_ini_file($dbconfig);
-        var_dump($this->database_config);
+        if ( ! file_exists($dbconfig)) {
+            throw new SihnonFramework_Exception_DatabaseConfigMissing("config file not found");
+        }
+        
+        $this->database_config = parse_ini_file($dbconfig);
         
         $this->hostname = $this->getDatabaseConfig('hostname');
         $this->username = $this->getDatabaseConfig('username');

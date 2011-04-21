@@ -27,11 +27,11 @@ class SihnonFramework_Page {
 
         try {
             $this->render($template_filename, $code_filename, $template_variables);
-        } catch (MediaListing_Exception_AbortEntirePage $e) {
+        } catch (SihnonFramework_Exception_AbortEntirePage $e) {
             return false;
-        } catch (MediaListing_Exception_FileNotFound $e) {
+        } catch (SihnonFramework_Exception_FileNotFound $e) {
             $this->render('errors/404.tpl', 'errors/404.php');
-        } catch (MediaListing_Exception $e) {
+        } catch (SihnonFramework_Exception $e) {
             $this->render('errors/unhandled-exception.tpl', 'errors/unhandled-exception.php', array(
                 'exception' => $e,
             ));
@@ -41,8 +41,8 @@ class SihnonFramework_Page {
     }
     
     protected function render($template_filename, $code_filename = null, $template_variables = array()) {
-        if ( ! $this->smarty->template_exists($template_filename)) {
-            throw new MediaListing_Exception_FileNotFound($template_filename);
+        if ( ! $this->smarty->templateExists($template_filename)) {
+            throw new SihnonFramework_Exception_FileNotFound($template_filename);
         }
         
         // Copy all the template variables into the namespace for this function,
@@ -52,21 +52,23 @@ class SihnonFramework_Page {
         }
         
         // Include the template code file, which will do all the work for this page
-        $real_code_filename = '../source/pages/' . $code_filename;
+        $real_code_filename = './source/pages/' . $code_filename;
         if ($code_filename && file_exists($real_code_filename)) {
             include $real_code_filename;
         }
+        
+        $this->smarty->assign('requested_page', $this->page);
         
         // Now execute the template itself, which will render the results of the code file
         $this->smarty->assign('page_content', $this->smarty->fetch($template_filename));
     }
     
     public static function redirect($relative_url) {
-        $absolute_url = MediaListing_Main::instance()->absoluteUrl($relative_url);
+        $absolute_url = SihnonFramework_Main::instance()->absoluteUrl($relative_url);
         
         header("Location: $absolute_url");
         
-        throw new MediaListing_Exception_AbortEntirePage();
+        throw new SihnonFramework_Exception_AbortEntirePage();
     }
 
 };

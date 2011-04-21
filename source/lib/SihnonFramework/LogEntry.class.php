@@ -25,7 +25,8 @@ abstract class SihnonFramework_LogEntry {
     }
 
     public static function fromDatabaseRow($row) {
-        return new Sihnon_ClientLogEntry(
+        $called_class = get_called_class();
+        return new $called_class(
             $row['id'],
             $row['level'],
             $row['ctime'],
@@ -38,9 +39,10 @@ abstract class SihnonFramework_LogEntry {
     }
 
     public static function fromId($id) {
+        $called_class = get_called_class();
         $database = Sihnon_Main::instance()->database();
-        return Sihnon_ClientLogEntry::fromDatabaseRow(
-            $database->selectOne('SELECT * FROM '.self::$table_name.' WHERE id=:id', array(
+        return $called_class::fromDatabaseRow(
+            $database->selectOne('SELECT * FROM '.static::$table_name.' WHERE id=:id', array(
                 array('name' => 'id', 'value' => $id, 'type' => PDO::PARAM_INT)
                 )
             )
@@ -51,10 +53,10 @@ abstract class SihnonFramework_LogEntry {
         $entries = array();
 
         $database = Sihnon_Main::instance()->database();
-        foreach ($database->selectList('SELECT * FROM '.self::$table_name.' ORDER BY ctime DESC LIMIT :limit', array(
+        foreach ($database->selectList('SELECT * FROM '.static::$table_name.' ORDER BY ctime DESC LIMIT :limit', array(
                 array('name' => 'limit', 'value' => $limit, 'type' => PDO::PARAM_INT)
             )) as $row) {
-            $entries[] = self::fromDatabaseRow($row);
+            $entries[] = static::fromDatabaseRow($row);
         }
 
         return $entries;

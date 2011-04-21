@@ -25,7 +25,7 @@ class SihnonFramework_RequestParser {
 
         // Read through the components list looking for elements matching known directories and files
         // to determine which page this request is for
-        $base_dir = '../source/templates';
+        $base_dir = './source/templates';
         while (true) {
             if ($components && ! $components[0]) {
                 // Skip over any empty components before we find a page
@@ -81,7 +81,7 @@ class SihnonFramework_RequestParser {
             return $this->vars[$key];
         }
         
-        if (is_string($default) && preg_match('/^[a-zA-Z_]+_Exception/', $default) && class_exists($default) && is_subclass_of($default, MediaListing_Exception)) {
+        if (is_string($default) && preg_match('/^[a-zA-Z_]+_Exception/', $default) && class_exists($default) && is_subclass_of($default, SihnonFramework_Exception)) {
             throw new $default();
         }
 

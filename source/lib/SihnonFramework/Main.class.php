@@ -48,7 +48,8 @@ class SihnonFramework_Main {
      */
     public static function instance() {
         if (!self::$instance) {
-            self::$instance = new Sihnon_Main();
+            $called_class = get_called_class();
+            self::$instance = new $called_class();
             self::$instance->init();
         }
 
