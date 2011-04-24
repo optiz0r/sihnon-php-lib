@@ -117,6 +117,11 @@ class SihnonFramework_LogEntry {
         $logger->log($entry);
     }
     
+    public static function logInternal($logger, $severity, $file, $line, $message, $category = SihnonFramework_Log::CATEGORY_DEFAULT) {
+        $entry = new self($severity, $category, time(), getmypid(), $file, $line, $message);
+        $logger->log($entry);
+    }
+    
     public static function debug($logger, $message, $category = SihnonFramework_Log::CATEGORY_DEFAULT) {
         static::log($logger, SihnonFramework_Log::LEVEL_DEBUG, $message, $category);
     }

@@ -71,4 +71,13 @@ define('Sihnon_ConfigTable', 'settings');
  */
 define('Sihnon_ConfigFile', '../private/settings.txt');
 
+/**
+ * Sihnon Development Mode
+ *
+ * Specifies whether or not the Framework should operate in debug mode
+ *
+ * @var bool
+ */
+define('Sihnon_Dev', true);
+
 ?>

@@ -99,7 +99,37 @@ class SihnonFramework_Main {
     }
 
     public static function initialise() {
+        // Provide a means to load framework classes autonomously
         spl_autoload_register(array('SihnonFramework_Main','autoload'));
+
+        // Handle error messages using custom error handler
+        set_error_handler(array(get_called_class(), 'errorHandler'));
+    }
+    
+    public static function errorHandler($errno, $errstr, $errfile = '', $errline = 0, $errcontext = array()) {
+        $severity = '';
+        switch ($errno) {
+            case E_NOTICE:
+            case E_USER_NOTICE:
+                $severity = SihnonFramework_Log::LEVEL_INFO;
+                break;
+            case E_WARNING:
+            case E_USER_WARNING:
+                $severity = SihnonFramework_Log::LEVEL_WARNING;
+                break;
+            case E_ERROR:
+            case E_USER_ERROR:
+                $severity = SihnonFramework_Log::LEVEL_ERROR;
+                break;
+            default:
+                $severity = SihnonFramework_Log::LEVEL_INFO;
+                break;
+        }
+        
+        SihnonFramework_LogEntry::logInternal(static::instance()->log(), $severity, $errfile, $errline, $errstr, SihnonFramework_Log::CATEGORY_DEFAULT);
+        
+        // If dev mode is enabled, fail here to enable the normal PHP error handling
+        return ! Sihnon_Dev;
     }
     
     public static function autoload($classname) {
@@ -224,6 +254,21 @@ class SihnonFramework_Main {
                 if (!chmod($path, $permissions)) return false;
             }
         }
+        return true;
+    }
+    
+    public static function rmdir_recursive($dir) { 
+        if (is_dir($dir)) {
+            $objects = scandir($dir);
+            foreach ($objects as $object) {
+                if ($object != "." && $object != "..") {
+                    if (filetype($dir."/".$object) == "dir") self::rmdir_recursive($dir."/".$object); else unlink($dir."/".$object); 
+                }
+            }
+            reset($objects); 
+            rmdir($dir);
+        }
+        
         return true;
     }
     
