@@ -58,7 +58,7 @@ class SihnonFramework_Log_Plugin_Database extends SihnonFramework_Log_PluginBase
         }
         
         $field_list = join(', ', $fields);
-        $bindings_list = join(', ', array_walk($this->fields, create_function('$value', 'return ":{$value}";')));
+        $bindings_list = join(', ', array_map(function($value) { return ":{$value}"; }, $fields));
         
         $this->database->insert("INSERT INTO {$this->table} ({$field_list}) VALUES({$bindings_list})", $bindings);
     }
