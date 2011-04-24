@@ -94,7 +94,7 @@ class SihnonFramework_Database {
 			$results = array();
 
 			$result = $this->dbh->query($sql);
-			foreach ($result as $row) {
+	        foreach ($result as $row) {
 				$results[] = $row;
 			}
 

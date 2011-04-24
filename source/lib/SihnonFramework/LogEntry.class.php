@@ -133,7 +133,7 @@ class SihnonFramework_LogEntry {
         static::log($logger, SihnonFramework_Log::LEVEL_ERROR, $message, $category);
     }
     
-    public static function recentEntries($log, $instance, $order_fields, $order_direction = SihnonFramework_Log::ORDER_DESC, $limit = 30) {
+    public static function recentEntries($log, $instance, $order_field, $order_direction = SihnonFramework_Log::ORDER_DESC, $limit = 30) {
         return $log->recentEntries(get_called_class(), $instance, $order_field, $order_direction, $limit);
     }
     
