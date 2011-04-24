@@ -1,89 +1,105 @@
 <?php
 
-abstract class SihnonFramework_LogEntry {
+class SihnonFramework_LogEntry {
+    
+    protected static $hostname;
+    protected static $progname;
+    
+    protected static $types = array(
+            'level'		=> 'string',
+            'category'	=> 'string',
+            'ctime'     => 'int',
+            'hostname'  => 'string',
+            'progname'  => 'string',
+            'pid'		=> 'int',
+            'file'	    => 'string',
+            'line'		=> 'int',
+            'message'	=> 'string',
+    );
 
-    protected static $table_name = "";
-
-    protected $id;
     protected $level;
+    protected $category;
     protected $ctime;
     protected $pid;
-    protected $hostname;
-    protected $progname;
+    protected $file;
     protected $line;
     protected $message;
     
-    protected function __construct($id, $level, $ctime, $pid, $hostname, $progname, $line, $message) {
-        $this->id       = $id;
+    public static function initialise() {
+        self::$hostname = gethostname();
+        self::$progname = '';
+    }
+    
+    protected function __construct($level, $category, $ctime, $pid, $file, $line, $message) {
         $this->level    = $level;
+        $this->category = $category;
         $this->ctime    = $ctime;
         $this->pid      = $pid;
-        $this->hostname = $hostname;
-        $this->progname = $progname;
+        $this->file     = $file;
         $this->line     = $line;
         $this->message  = $message;
     }
-
-    public static function fromDatabaseRow($row) {
-        $called_class = get_called_class();
-        return new $called_class(
-            $row['id'],
+    
+    public static function fromArray($row) {
+        return new self(
             $row['level'],
+            $row['category'],
             $row['ctime'],
             $row['pid'],
-            $row['hostname'],
-            $row['progname'],
+            $row['file'],
             $row['line'],
             $row['message']
         );
     }
+    
+    public function fields() {
+        return array_keys(static::$types);
+    }
+    
+    public function types() {
+        return array_values(static::$types);
+    }
 
-    public static function fromId($id) {
-        $called_class = get_called_class();
-        $database = Sihnon_Main::instance()->database();
-        return $called_class::fromDatabaseRow(
-            $database->selectOne('SELECT * FROM '.static::$table_name.' WHERE id=:id', array(
-                array('name' => 'id', 'value' => $id, 'type' => PDO::PARAM_INT)
-                )
-            )
+    public function values() {
+        return array(
+            $this->level,
+            $this->category,
+            $this->ctime,
+            static::$hostname,
+            static::$progname,
+            $this->pid,
+            $this->file,
+            $this->line,
+            $this->message,
         );
     }
-
-    public static function recent($limit = 100) {
-        $entries = array();
-
-        $database = Sihnon_Main::instance()->database();
-        foreach ($database->selectList('SELECT * FROM '.static::$table_name.' ORDER BY ctime DESC LIMIT :limit', array(
-                array('name' => 'limit', 'value' => $limit, 'type' => PDO::PARAM_INT)
-            )) as $row) {
-            $entries[] = static::fromDatabaseRow($row);
-        }
-
-        return $entries;
-    }
-
-    public function id() {
-        return $this->id;
-    }
-
+    
     public function level() {
         return $this->level;
+    }
+    
+    public function category() {
+        return $this->category;
     }
 
     public function ctime() {
         return $this->ctime;
     }
 
-    public function pid() {
-        return $this->pid;
-    }
-
     public function hostname() {
-        return $this->hostname;
+        return static::$hostname;
     }
 
     public function progname() {
-        return $this->progname;
+        return static::$progname;
+    }
+
+    public function pid() {
+        return $this->pid;
+    }
+    
+    public function file() {
+        return $this->file;
     }
 
     public function line() {
@@ -93,7 +109,40 @@ abstract class SihnonFramework_LogEntry {
     public function message() {
         return $this->message;
     }
+    
+    protected static function log($logger, $severity, $message, $category = SihnonFramework_Log::CATEGORY_DEFAULT) {
+        $backtrace = debug_backtrace(false);
+        $entry = new self($severity, $category, time(), getmypid(), $backtrace[1]['file'], $backtrace[1]['line'], $message);
+        
+        $logger->log($entry);
+    }
+    
+    public static function debug($logger, $message, $category = SihnonFramework_Log::CATEGORY_DEFAULT) {
+        static::log($logger, SihnonFramework_Log::LEVEL_DEBUG, $message, $category);
+    }
+
+    public static function info($logger, $message, $category = SihnonFramework_Log::CATEGORY_DEFAULT) {
+        static::log($logger, SihnonFramework_Log::LEVEL_INFO, $message, $category);
+    }
+
+    public static function warning($logger, $message, $category = SihnonFramework_Log::CATEGORY_DEFAULT) {
+        static::log($logger, SihnonFramework_Log::LEVEL_WARNING, $message, $category);
+    }
+
+    public static function error($logger, $message, $category = SihnonFramework_Log::CATEGORY_DEFAULT) {
+        static::log($logger, SihnonFramework_Log::LEVEL_ERROR, $message, $category);
+    }
+    
+    public static function recentEntries($log, $instance, $order_fields, $order_direction = SihnonFramework_Log::ORDER_DESC, $limit = 30) {
+        return $log->recentEntries(get_called_class(), $instance, $order_field, $order_direction, $limit);
+    }
+    
+    public static function recentEntriesByField($log, $instance, $field, $value, $order_field, $order_direction = SihnonFramework_Log::ORDER_DESC, $limit = 30) {
+        return $log->recentEntriesByField(get_called_class(), $instance, $field, $value, static::$types[$field], $order_field, $order_direction, $limit);
+    }
 
 };
+
+SihnonFramework_LogEntry::initialise();
 
 ?>

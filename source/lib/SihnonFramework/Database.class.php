@@ -77,7 +77,7 @@ class SihnonFramework_Database {
 	public function selectList($sql, $bind_params = null) {
 		if ($bind_params) {
 	        $stmt = $this->dbh->prepare($sql);
-
+	        
             foreach ($bind_params as $param) {
                 $stmt->bindValue(':'.$param['name'], $param['value'], $param['type']);
             }

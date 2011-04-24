@@ -1,35 +1,25 @@
 <?php
 
-class SihnonFramework_Log_Plugin_FlatFile extends SihnonFramework_Log_PluginBase implements Sihnon_Log_IPlugin {
-    
+class SihnonFramework_Log_Plugin_Console extends SihnonFramework_Log_PluginBase implements SihnonFramework_Log_IPlugin {
+
     /**
      * Name of this plugin
      * @var string
      */
-    const PLUGIN_NAME = "FlatFile";
+    const PLUGIN_NAME = "Console";
     
-    protected $filename;
     protected $format;
-    protected $fp;
     
-    protected function __construct($instance, $filename, $format) {
+    protected function __construct($instance, $format) {
         parent::__construct($instance);
         
-        $this->filename = $filename;
         $this->format   = $format;
-        
-        $this->fp = fopen($this->filename, 'a');
-    }
-    
-    public function __destruct() {
-        fclose($this->fp);
     }
     
     public static function create(SihnonFramework_Config $config, $instance) {
-        $filename = $config->get("logging.".self::PLUGIN_NAME.".{$instance}.filename");
-        $format   = $config->get("logging.".self::PLUGIN_NAME.".{$instance}.format");
+        $format   = $config->get("logging.".static::PLUGIN_NAME.".{$instance}.format");
         
-        return new self($instance, $filename, $format);
+        return new self($instance, $format);
     }
     
     /**
@@ -49,9 +39,9 @@ class SihnonFramework_Log_Plugin_FlatFile extends SihnonFramework_Log_PluginBase
         $fields = array_keys($fields_map);
         $values = array_values($fields_map);
         
-        $formatted_entry = str_replace(array_map(function($name) { return "%{$name}%"; }, $fields), $values, $this->format) . "\n";
-                
-        fwrite($this->fp, $formatted_entry, strlen($formatted_entry));
+        $formatted_entry = str_replace(array_map(function($name) { return "%{$name}%"; }, $fields ), $values, $this->format);
+        
+        echo $formatted_entry . "\n";
     }
     
     /**
@@ -81,8 +71,7 @@ class SihnonFramework_Log_Plugin_FlatFile extends SihnonFramework_Log_PluginBase
     public function recentByField($entry_class, $field, $value, $order_field, $order_direction, $limit = 30) {
         throw new SihnonFramework_Exception_NotImplemented();
     }
-    
-    
-}
+        
+};
 
 ?>

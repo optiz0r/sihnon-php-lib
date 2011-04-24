@@ -13,7 +13,7 @@ class SihnonFramework_Log_PluginFactory extends Sihnon_PluginFactory {
         
     }
     
-    public static function create($plugin, $options) {
+    public static function create(SihnonFramework_Config $config, $plugin, $instance) {
         self::ensureScanned();
         
         if (! self::isValidPlugin($plugin)) {
@@ -22,7 +22,7 @@ class SihnonFramework_Log_PluginFactory extends Sihnon_PluginFactory {
         
         $classname = self::classname($plugin);
         
-        return call_user_func(array($classname, 'create'), $options);
+        return call_user_func(array($classname, 'create'), $config, $instance);
     }
     
 }

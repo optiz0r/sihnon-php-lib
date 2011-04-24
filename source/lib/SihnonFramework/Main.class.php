@@ -35,9 +35,7 @@ class SihnonFramework_Main {
         	'filename' => Sihnon_ConfigFile)
         );
         
-        $this->log    = new Sihnon_Log($this->config->get('logging.plugin'), array(
-        	'database' => $this->database)
-        );
+        $this->log    = new Sihnon_Log($this->config);
                 
         $this->cache  = new Sihnon_Cache($this->config);
     }

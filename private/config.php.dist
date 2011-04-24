@@ -1,6 +1,16 @@
 <?php
 
 /**
+ * Sihnon Framework Library path
+ * 
+ * Specifies the absolute or relative path to the Sihnon Framework library directory, relative to the webui root directory.
+ * Path must end with a trailing slash.
+ * 
+ * @var string
+ */
+define('SihnonFramework_Lib', '../../sihnon-php/lib/source/lib/');
+
+/**
  * Sihnon Library path
  * 
  * Specifies the absolute or relative path to the Sihnon library directory, relative to the webui root directory.
@@ -8,7 +18,8 @@
  * 
  * @var string
  */
-define('Sihnon_Lib', '../lib/');
+define('Sihnon_Lib', '/home/ben/projects/handbrake-cluster-webui/lib/');
+
 
 /**
  * Sihnon Database Support
