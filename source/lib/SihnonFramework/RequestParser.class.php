@@ -5,9 +5,14 @@ class SihnonFramework_RequestParser {
     private $request_string;
     private $page = array();
     private $vars = array();
+    
+    private $template_dir;
+    private $template_code_dir;
 
-    public function __construct($request_string) {
-        $this->request_string = $request_string;
+    public function __construct($request_string, $template_dir = './source/templates', $template_code_dir = './source/pages') {
+        $this->request_string    = $request_string;
+        $this->template_dir      = $template_dir;
+        $this->template_code_dir = $template_code_dir;
 
         $this->parse();
     }
@@ -25,7 +30,7 @@ class SihnonFramework_RequestParser {
 
         // Read through the components list looking for elements matching known directories and files
         // to determine which page this request is for
-        $base_dir = './source/templates';
+        $base_dir = $this->template_dir;
         while (true) {
             if ($components && ! $components[0]) {
                 // Skip over any empty components before we find a page
@@ -116,6 +121,14 @@ class SihnonFramework_RequestParser {
     
     public function request_string() {
         return $this->request_string;
+    }
+    
+    public function template_dir() {
+        return $this->template_dir;
+    }
+    
+    public function template_code_dir() {
+        return $this->template_code_dir;
     }
 
 };
