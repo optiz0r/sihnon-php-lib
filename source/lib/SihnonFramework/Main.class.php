@@ -91,7 +91,7 @@ class SihnonFramework_Main {
     }
     
     public function absoluteUrl($relative_url) {
-        $secure = isset($_SERVER['SECURE']);
+        $secure = isset($_SERVER['SECURE']) || (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on');
         $port = $_SERVER['SERVER_PORT'];
         return 'http' . ($secure ? 's' : '') . '://'
             . $_SERVER['HTTP_HOST'] . (($port == 80 || ($secure && $port == 443)) ? '' : ':' . $port)
