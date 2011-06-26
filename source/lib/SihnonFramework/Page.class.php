@@ -52,7 +52,7 @@ class SihnonFramework_Page {
         }
         
         // Include the template code file, which will do all the work for this page
-        $real_code_filename = './source/pages/' . $code_filename;
+        $real_code_filename = $this->request->template_code_dir() . DIRECTORY_SEPARATOR . $code_filename;
         if ($code_filename && file_exists($real_code_filename)) {
             include $real_code_filename;
         }
