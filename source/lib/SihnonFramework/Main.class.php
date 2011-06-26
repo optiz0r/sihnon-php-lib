@@ -237,7 +237,18 @@ class SihnonFramework_Main {
         }
     }
     
+    /**
+     * Returns the canonical form of the given path, made absolute if relative
+     * 
+     * @param string $relative_path
+     * @return string
+     */
     public static function makeAbsolutePath($relative_path) {
+        if (preg_match('#^/#', $relative_path)) {
+            // This path is already absolute, just canonicalise it
+            return realpath($relative_path);
+        }
+        
         $absolute_path = getcwd() . DIRECTORY_SEPARATOR . $relative_path;
         return realpath($absolute_path);
     }
