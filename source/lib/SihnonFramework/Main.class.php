@@ -144,19 +144,28 @@ class SihnonFramework_Main {
             if (preg_match("/^{$class['base']}_/", $classname)) {
                 // Special case: all related exceptions are grouped into a single file
                 if (preg_match("/^({$class['base']}_(?:.*?_)?)Exception/", $classname, $matches)) {
-                    $exceptions_filename = $class['base_dir_prefix'] . preg_replace('/_/', '/', $matches[1]) . 'Exceptions.class.php';
-                    if (file_exists($exceptions_filename)) {
+                    $exceptions_filename = /*$class['base_dir_prefix'] .*/ preg_replace('/_/', '/', $matches[1]) . 'Exceptions.class.php';
+                    if (stream_resolve_include_path($exceptions_filename)) {
                         require_once($exceptions_filename);
                     }
                     return;
                 }
                     
                 // Replace any underscores with directory separators
-                $filename = $class['base_dir_prefix'] . preg_replace('/_/', '/', $classname) . '.class.php';
+                $filename = /*$class['base_dir_prefix'] .*/ preg_replace('/_/', '/', $classname) . '.class.php';
         
                 // If this file exists, load it
-                if (file_exists($filename)) {
-                    require_once(realpath($filename));
+                if (stream_resolve_include_path($filename)) {
+                    require_once($filename);
+                    return;
+                }
+                
+                // Try again without the .class suffix
+                $filename = /*$class['base_dir_prefix'] .*/ preg_replace('/_/', '/', $classname) . '.php';
+        
+                // If this file exists, load it
+                if (stream_resolve_include_path($filename)) {
+                    require_once($filename);
                     return;
                 }
             } elseif ($class['subclass'] && preg_match("/^{$class['subclass']}_/", $classname)) {
@@ -165,8 +174,8 @@ class SihnonFramework_Main {
                 
                 // Special case: all related exceptions are grouped into a single file
                 if (preg_match("/^({$class['subclass']}_(?:.*?_)?)Exception/", $classname, $matches)) {
-                    $exceptions_filename = $class['subclass_dir_prefix'] . preg_replace('/_/', '/', $matches[1]) . 'Exceptions.class.php'; 
-                    if (file_exists($exceptions_filename)) {
+                    $exceptions_filename = /*$class['subclass_dir_prefix'] .*/ preg_replace('/_/', '/', $matches[1]) . 'Exceptions.class.php'; 
+                    if (stream_resolve_include_path($exceptions_filename)) {
                         require_once($exceptions_filename);
                     } else {
                         // Create this class to extend the Framework parent
@@ -177,11 +186,11 @@ class SihnonFramework_Main {
                 }
                 
                 // Replace any underscores with directory separators
-                $filename = $class['subclass_dir_prefix'] . preg_replace('/_/', '/', $classname) . '.class.php';
+                $filename = /*$class['subclass_dir_prefix'] .*/ preg_replace('/_/', '/', $classname) . '.class.php';
         
                 // If this file exists, load it
-                if (file_exists($filename)) {
-                    require_once(realpath($filename));
+                if (stream_resolve_include_path($filename)) {
+                    require_once($filename);
                     return;
                 } else {
                     // Create this class to extend the Framework parent
@@ -209,19 +218,39 @@ class SihnonFramework_Main {
      * @param unknown_type $subclass_dir_prefix
      */
     public static function registerAutoloadClasses($base, $base_dir_prefix, $subclass = null, $subclass_dir_prefix = null) {
+        $canonical_base_dir_prefix = static::makeAbsolutePath($base_dir_prefix);
+        if ( ! $canonical_base_dir_prefix) {
+            throw new SihnonFramework_Exception_FileNotFound($base_dir_prefix);
+        }
+        
         // The paths must end with a trailing slash
-        if ($base_dir_prefix && $base_dir_prefix[strlen($base_dir_prefix) - 1] != DIRECTORY_SEPARATOR) {
-            $base_dir_prefix .= DIRECTORY_SEPARATOR;
+        if ($canonical_base_dir_prefix && $canonical_base_dir_prefix[strlen($canonical_base_dir_prefix) - 1] != DIRECTORY_SEPARATOR) {
+            $canonical_base_dir_prefix .= DIRECTORY_SEPARATOR;
         }
-        if ($subclass_dir_prefix && $subclass_dir_prefix[strlen($subclass_dir_prefix) - 1] != DIRECTORY_SEPARATOR) {
-            $subclass_dir_prefix .= DIRECTORY_SEPARATOR;
+        
+        $include_path_prefix = $canonical_base_dir_prefix . PATH_SEPARATOR;
+        
+        $canonical_subclass_dir_prefix = null;
+        if ($subclass_dir_prefix) {
+            $canonical_subclass_dir_prefix = static::makeAbsolutePath($subclass_dir_prefix);
+            if ( ! $canonical_subclass_dir_prefix) {
+                throw new SihnonFramework_Exception_FileNotFound($subclass_dir_prefix);
+            }
+            
+            if ($canonical_subclass_dir_prefix[strlen($canonical_subclass_dir_prefix) - 1] != DIRECTORY_SEPARATOR) {
+                $canonical_subclass_dir_prefix .= DIRECTORY_SEPARATOR;
+            }
+            
+            $include_path_prefix = $canonical_subclass_dir_prefix . PATH_SEPARATOR . $include_path_prefix;
         }
+        
+        set_include_path($include_path_prefix . get_include_path());
         
         array_unshift(self::$autoload_classes, array(
             'base' => $base,
-            'base_dir_prefix' => $base_dir_prefix,
+            'base_dir_prefix' => $canonical_base_dir_prefix,
             'subclass' => $subclass,
-            'subclass_dir_prefix' => $subclass_dir_prefix,
+            'subclass_dir_prefix' => $canonical_subclass_dir_prefix,
         ));
     }
     
