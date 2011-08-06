@@ -2,8 +2,8 @@
 
 class SihnonFramework_LogEntry {
     
-    protected static $hostname;
-    protected static $progname;
+    protected static $localHostname;
+    protected static $localProgname;
     
     protected static $types = array(
             'level'		=> 'string',
@@ -20,20 +20,24 @@ class SihnonFramework_LogEntry {
     protected $level;
     protected $category;
     protected $ctime;
+    protected $hostname;
+    protected $progname;
     protected $pid;
     protected $file;
     protected $line;
     protected $message;
     
     public static function initialise() {
-        self::$hostname = gethostname();
-        self::$progname = '';
+        static::$localHostname = gethostname();
+        static::$localProgname = '';
     }
     
-    protected function __construct($level, $category, $ctime, $pid, $file, $line, $message) {
+    protected function __construct($level, $category, $ctime, $hostname, $progname, $pid, $file, $line, $message) {
         $this->level    = $level;
         $this->category = $category;
         $this->ctime    = $ctime;
+        $this->hostname = $hostname;
+        $this->progname = $progname;
         $this->pid      = $pid;
         $this->file     = $file;
         $this->line     = $line;
@@ -45,11 +49,21 @@ class SihnonFramework_LogEntry {
             $row['level'],
             $row['category'],
             $row['ctime'],
+            $row['hostname'],
+            $row['progname'],
             $row['pid'],
             $row['file'],
             $row['line'],
             $row['message']
         );
+    }
+    
+    public static function localProgname() {
+        return static::$localProgname;
+    }
+    
+    public static function setLocalProgname($progname) {
+    	static::$localProgname = $progname;
     }
     
     public function fields() {
@@ -65,8 +79,8 @@ class SihnonFramework_LogEntry {
             $this->level,
             $this->category,
             $this->ctime,
-            static::$hostname,
-            static::$progname,
+            $this->hostname,
+            $this->progname,
             $this->pid,
             $this->file,
             $this->line,
@@ -112,13 +126,13 @@ class SihnonFramework_LogEntry {
     
     protected static function log($logger, $severity, $message, $category = SihnonFramework_Log::CATEGORY_DEFAULT) {
         $backtrace = debug_backtrace(false);
-        $entry = new self($severity, $category, time(), getmypid(), $backtrace[1]['file'], $backtrace[1]['line'], $message);
+        $entry = new static($severity, $category, time(), static::$localHostname, static::$localProgname, getmypid(), $backtrace[1]['file'], $backtrace[1]['line'], $message);
         
         $logger->log($entry);
     }
     
     public static function logInternal($logger, $severity, $file, $line, $message, $category = SihnonFramework_Log::CATEGORY_DEFAULT) {
-        $entry = new self($severity, $category, time(), getmypid(), $file, $line, $message);
+        $entry = new static($severity, $category, time(), static::$localHostname, static::$localProgname, getmypid(), $file, $line, $message);
         $logger->log($entry);
     }
     
