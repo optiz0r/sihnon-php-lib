@@ -101,11 +101,11 @@ class SihnonFramework_LogEntry {
     }
 
     public function hostname() {
-        return static::$hostname;
+        return $this->hostname;
     }
 
     public function progname() {
-        return static::$progname;
+        return $this->progname;
     }
 
     public function pid() {
