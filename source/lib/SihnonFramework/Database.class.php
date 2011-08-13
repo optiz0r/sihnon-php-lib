@@ -1,6 +1,8 @@
 <?php
 
 class SihnonFramework_Database {
+    
+    const SQLSTATE_SERVER_GONE = 'HY000';
 
     private $config;
     private $dbh;
@@ -31,7 +33,7 @@ class SihnonFramework_Database {
         $this->dbname   = $this->getDatabaseConfig('dbname');
 
         try {
-            $this->dbh  = new PDO("mysql:host={$this->hostname};dbname={$this->dbname}", $this->username, $this->password);
+            $this->dbh  = new PDO("mysql:host={$this->hostname};dbname={$this->dbname}", $this->username, $this->password, array(PDO::ATTR_PERSISTENT => true));
         } catch (PDOException $e) {
             throw new Sihnon_Exception_DatabaseConnectFailed($e->getMessage());
         }
@@ -40,6 +42,16 @@ class SihnonFramework_Database {
 
     public function __destruct() {
         $this->dbh = null;
+    }
+    
+    protected function reconnect() {
+        $this->dbh = null;
+        
+        try {
+            $this->dbh  = new PDO("mysql:host={$this->hostname};dbname={$this->dbname}", $this->username, $this->password, array(PDO::ATTR_PERSISTENT => true));
+        } catch (PDOException $e) {
+            throw new Sihnon_Exception_DatabaseConnectFailed($e->getMessage());
+        }
     }
     
     /**
@@ -54,11 +66,28 @@ class SihnonFramework_Database {
 
         return $this->database_config[$key];
     }
+    
+    private function query($sql, $count = 0) {
+        $results = $this->dbh->query($sql);
+        if (! $results) {
+            list($std_code, $driver_code, $message) = $this->dbh->errorInfo();
+            
+            if ($count == 0 && $std_code == static::SQLSTATE_SERVER_GONE) {
+                // Retry the query before failing
+                return $this->query($sql, ++$count);
+            } else {
+                throw new Sihnon_Exception_DatabaseQueryFailed($message, $driver_code);
+            }
+        }
+        
+        return $results;
+    }
 
+    
     public function selectAssoc($sql, $key_col, $value_cols) {
         $results = array();
 
-        foreach ($this->dbh->query($sql) as $row) {
+        foreach ($this->query($sql) as $row) {
             if (is_array($value_cols)) {
                 $values = array();
                 foreach ($value_cols as $value_col) {
@@ -74,7 +103,7 @@ class SihnonFramework_Database {
         return $results;
     }
 
-	public function selectList($sql, $bind_params = null) {
+	public function selectList($sql, $bind_params = null, $count = 0) {
 		if ($bind_params) {
 	        $stmt = $this->dbh->prepare($sql);
 	        
@@ -82,18 +111,24 @@ class SihnonFramework_Database {
                 $stmt->bindValue(':'.$param['name'], $param['value'], $param['type']);
             }
 
-			$result = $stmt->execute();
-			if (!$result) {
-                list($dummy, $code, $message) = $stmt->errorInfo();
-                throw new Sihnon_Exception_DatabaseQueryFailed($message, $code);
-			}
-
+            $result = $stmt->execute();
+            if (! $result) {
+                list($std_code, $driver_code, $message) = $stmt->errorInfo();
+                
+                if ($count == 0 && $std_code == static::SQLSTATE_SERVER_GONE) {
+                    $this->reconnect();
+                    return $this->insert($sql, $bind_params, ++$count);
+                } else {
+                    throw new Sihnon_Exception_DatabaseQueryFailed($message, $driver_code);
+                }
+            }
+            
 			return $stmt->fetchAll();
 
 		} else {
 			$results = array();
 
-			$result = $this->dbh->query($sql);
+			$result = $this->query($sql);
 	        foreach ($result as $row) {
 				$results[] = $row;
 			}
@@ -111,7 +146,7 @@ class SihnonFramework_Database {
 		return $rows[0];
 	}
 
-    public function insert($sql, $bind_params = null) {
+    public function insert($sql, $bind_params = null, $count = 0) {
         $stmt = $this->dbh->prepare($sql);
 
         if ($bind_params) {
@@ -125,13 +160,20 @@ class SihnonFramework_Database {
         }
 
         $result = $stmt->execute();
-        if (!$result) {
-            list($code, $dummy, $message) = $stmt->errorInfo();
-            throw new Sihnon_Exception_DatabaseQueryFailed($message, $code);
+        if (! $result) {
+            list($std_code, $driver_code, $message) = $stmt->errorInfo();
+            
+            if ($count == 0 && $std_code == static::SQLSTATE_SERVER_GONE) {
+                $this->reconnect();
+                return $this->insert($sql, $bind_params, ++$count);
+            } else {
+                var_dump($std_code, $driver_code, $message);
+                throw new Sihnon_Exception_DatabaseQueryFailed($message, $driver_code);
+            }
         }
     }
     
-    public function update($sql, $bind_params = null) {
+    public function update($sql, $bind_params = null, $count = 0) {
         $stmt = $this->dbh->prepare($sql);
 
         if ($bind_params) {
@@ -145,9 +187,15 @@ class SihnonFramework_Database {
         }
 
         $result = $stmt->execute();
-        if (!$result) {
-            list($code, $dummy, $message) = $stmt->errorInfo();
-            throw new Sihnon_Exception_DatabaseQueryFailed($message, $code);
+        if (! $result) {
+            list($std_code, $driver_code, $message) = $stmt->errorInfo();
+            
+            if ($count == 0 && $std_code == static::SQLSTATE_SERVER_GONE) {
+                $this->reconnect();
+                return $this->update($sql, $bind_params, ++$count);
+            } else {
+                throw new Sihnon_Exception_DatabaseQueryFailed($message, $driver_code);
+            }
         }
     }
 
