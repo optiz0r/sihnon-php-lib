@@ -30,5 +30,8 @@ class SihnonFramework_Exception_CacheObjectNotFound    extends SihnonFramework_E
 
 class SihnonFramework_Exception_InvalidPluginName      extends SihnonFramework_Exception {};
 
+class SihnonFramework_Exception_LogException           extends SihnonFramework_Exception {};
+class SihnonFramework_Exception_LogFileNotWriteable    extends SihnonFramework_Exception_LogException {};
+class SihnonFramework_Exception_InvalidLog             extends SihnonFramework_Exception_LogException {};
 
 ?>

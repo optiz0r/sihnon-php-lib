@@ -18,6 +18,9 @@ class SihnonFramework_Log_Plugin_FlatFile extends SihnonFramework_Log_PluginBase
         $this->filename = $filename;
         $this->format   = $format;
         
+        // Verify the given log file can be written to
+        $this->verifyLogfile();
+        
         $this->fp = fopen($this->filename, 'a');
     }
     
@@ -30,6 +33,26 @@ class SihnonFramework_Log_Plugin_FlatFile extends SihnonFramework_Log_PluginBase
         $format   = $config->get("logging.".self::PLUGIN_NAME.".{$instance}.format");
         
         return new self($instance, $filename, $format);
+    }
+    
+    protected function verifyLogfile() {
+        // Check that the file exists, or can be created
+        $file_ok = false;
+        
+        if (preg_match('#php://(stderr|stdout)#', $this->filename)) {
+            $file_ok = true;
+        } else if (file_exists($this->filename) && is_writable($this->filename)) {
+            $file_ok = true;
+        } else {
+            $directory = dirname($this->filename);
+            if (file_exists($directory) && is_writeable($directory)) {
+                $file_ok = true;
+            }
+        }
+        
+        if (!$file_ok) {
+            throw new SihnonFramework_Exception_LogFileNotWriteable($this->filename);
+        }
     }
     
     /**

@@ -125,13 +125,21 @@ class SihnonFramework_LogEntry {
     }
     
     protected static function log($logger, $severity, $message, $category = SihnonFramework_Log::CATEGORY_DEFAULT) {
+        if (!$logger) {
+            throw new SihnonFramework_Exception_InvalidLog();
+        }
+        
         $backtrace = debug_backtrace(false);
         $entry = new static($severity, $category, time(), static::$localHostname, static::$localProgname, getmypid(), $backtrace[1]['file'], $backtrace[1]['line'], $message);
         
-        $logger->log($entry);
+       $logger->log($entry);
     }
     
     public static function logInternal($logger, $severity, $file, $line, $message, $category = SihnonFramework_Log::CATEGORY_DEFAULT) {
+        if (!$logger) {
+            throw new SihnonFramework_Exception_InvalidLog();
+        }
+        
         $entry = new static($severity, $category, time(), static::$localHostname, static::$localProgname, getmypid(), $file, $line, $message);
         $logger->log($entry);
     }
