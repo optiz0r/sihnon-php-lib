@@ -126,7 +126,8 @@ class SihnonFramework_LogEntry {
     
     protected static function log($logger, $severity, $message, $category = SihnonFramework_Log::CATEGORY_DEFAULT) {
         if (!$logger) {
-            throw new SihnonFramework_Exception_InvalidLog();
+            file_put_contents('php://stderr', "Log message raised before log initialisation: {$message}");
+            return false;
         }
         
         $backtrace = debug_backtrace(false);
@@ -137,7 +138,8 @@ class SihnonFramework_LogEntry {
     
     public static function logInternal($logger, $severity, $file, $line, $message, $category = SihnonFramework_Log::CATEGORY_DEFAULT) {
         if (!$logger) {
-            throw new SihnonFramework_Exception_InvalidLog();
+            file_put_contents('php://stderr', "Log message raised before log initialisation: {$message}");
+            return false;
         }
         
         $entry = new static($severity, $category, time(), static::$localHostname, static::$localProgname, getmypid(), $file, $line, $message);
@@ -157,6 +159,11 @@ class SihnonFramework_LogEntry {
     }
 
     public static function error($logger, $message, $category = SihnonFramework_Log::CATEGORY_DEFAULT) {
+        // Treat errors as fatal if they can't be logged.
+        if (!$logger) {
+            throw new SihnonFramework_Exception_InvalidLog();
+        }
+        
         static::log($logger, SihnonFramework_Log::LEVEL_ERROR, $message, $category);
     }
     
