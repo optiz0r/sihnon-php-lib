@@ -15,8 +15,6 @@ class SihnonFramework_Log {
     protected $plugins = array();
     
     public function __construct(SihnonFramework_Config $config) {
-        $log = SihnonFramework_Main::instance()->log();
-        
         // Get a list of the logging plugins to be used
         $plugins = $config->get('logging.plugins');
         
@@ -32,7 +30,7 @@ class SihnonFramework_Log {
                         'category' => $config->get("logging.{$plugin}.{$instance}.category"),
                     );
                 } catch(SihnonFramework_Exception_LogException $e) {
-                    SihnonFramework_LogEntry::warning($log, $e->getMessage());
+                    SihnonFramework_LogEntry::warning($this, $e->getMessage());
                 }
             }
         }
