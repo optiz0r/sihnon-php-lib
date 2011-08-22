@@ -95,7 +95,7 @@ class SihnonFramework_Main {
         $port = $_SERVER['SERVER_PORT'];
         return 'http' . ($secure ? 's' : '') . '://'
             . $_SERVER['HTTP_HOST'] . (($port == 80 || ($secure && $port == 443)) ? '' : ':' . $port)
-            . '/' . $this->base_uri . $relative_url; 
+            . $this->base_uri . $relative_url; 
     }
 
     public static function initialise() {
