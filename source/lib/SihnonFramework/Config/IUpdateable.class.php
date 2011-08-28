@@ -21,6 +21,14 @@ interface SihnonFramework_Config_IUpdateable {
      */
     public function add($key, $type, $value);
     
+    /**
+     * 
+     * Remove a setting
+     * @param string $key
+     * @return bool
+     */
+    public function remove($key);
+    
 }
 
 ?>

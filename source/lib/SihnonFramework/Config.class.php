@@ -152,6 +152,21 @@ class SihnonFramework_Config {
         // Persist the setting into the backend
         return $this->backend->add($key, $type, $packed_value);
     }
+    
+    public function remove($key) {
+        if ( ! ($this->backend instanceof Sihnon_Config_IUpdateable)) {
+            throw new Sihnon_Exception_ReadOnlyConfigBackend();
+        }
+        if (!isset($this->settings[$key])) {
+            throw new Sihnon_Exception_UnknownSetting($key);
+        }
+
+        // Remove the setting for this run
+        unset($this->settings[$key]);
+        
+        // Persist the change into the backend
+        return $this->backend->remove($key);
+    }
 
 };
 

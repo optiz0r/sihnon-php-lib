@@ -43,6 +43,12 @@ class SihnonFramework_Config_Plugin_Database extends Sihnon_PluginBase implement
         ));
     }
     
+    public function remove($key) {
+        return $this->database->update("DELETE FROM `{$this->table}` WHERE `name`=:name LIMIT 1", array(
+            array('name' => 'name',  'value' => $key,   'type' => PDO::PARAM_STR),
+        ));
+    }
+    
 }
 
 ?>
