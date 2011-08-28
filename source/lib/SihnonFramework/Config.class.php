@@ -55,6 +55,28 @@ class SihnonFramework_Config {
         $this->backend = Sihnon_Config_PluginFactory::create($backend, $options);
         $this->settings = $this->backend->preload();
     }
+    
+    protected static function pack($type, $value) {
+        switch ($type) {
+            case static::TYPE_STRING_LIST: {
+                return join("\n", $value);
+            } break;
+            
+            default: {
+                return $value;
+            }
+        }
+    }
+    
+    protected static function unpack($type, $value) {
+        switch ($type) {
+            case self::TYPE_STRING_LIST:
+                return array_map('trim', explode("\n", $value));
+                
+            default:
+               return $value;
+        }
+    }
 
     /**
      * Identifies whether the named setting exists
@@ -76,13 +98,59 @@ class SihnonFramework_Config {
             throw new Sihnon_Exception_UnknownSetting($key);
         }
 
-        switch ($this->settings[$key]['type']) {
-            case self::TYPE_STRING_LIST:
-                return array_map('trim', explode("\n", $this->settings[$key]['value']));
-                
-            default:
-               return $this->settings[$key]['value'];
+        return static::unpack($this->settings[$key]['type'], $this->settings[$key]['value']);
+    }
+    
+    public function type($key) {
+        if (!isset($this->settings[$key])) {
+            throw new Sihnon_Exception_UnknownSetting($key);
         }
+        
+        return $this->settings[$key]['type'];
+    }
+    
+    public function enumerateAll() {
+        return array_map(function($r) {return $r['name'];}, $this->settings);
+    }
+    
+    public function set($key, $value) {
+        if ( ! ($this->backend instanceof Sihnon_Config_IUpdateable)) {
+            throw new Sihnon_Exception_ReadOnlyConfigBackend();
+        }
+        if (!isset($this->settings[$key])) {
+            throw new Sihnon_Exception_UnknownSetting($key);
+        }
+
+        $packed_value = static::pack($this->settings[$key]['type'], $value);
+        
+        // Change the setting value for this run
+        $this->settings[$key]['value'] = $packed_value;
+        
+        // Persist the change into the backend
+        return $this->backend->set($key, $packed_value);
+    }
+    
+    public function add($key, $type, $value) {
+        if ( ! ($this->backend instanceof Sihnon_Config_IUpdateable)) {
+            throw new Sihnon_Exception_ReadOnlyConfigBackend();
+        }
+        if (isset($this->settings[$key])) {
+            throw new Sihnon_Exception_SettingExists($key);
+        }
+        if ( ! Sihnon_Main::isClassConstantValue(get_called_class(), 'TYPE_', $type)) {
+            throw new Sihnon_Exception_UnknownSettingType($type);
+        } 
+        
+        $packed_value = static::pack($type, $value);
+        
+        // Add the setting for this run
+        $this->settings[$key] = array(
+            'type'  => $type,
+            'value' => $packed_value,
+        );
+        
+        // Persist the setting into the backend
+        return $this->backend->add($key, $type, $packed_value);
     }
 
 };

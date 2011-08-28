@@ -24,6 +24,9 @@ class SihnonFramework_Exception_ResultCountMismatch    extends SihnonFramework_E
 
 class SihnonFramework_Exception_ConfigException        extends SihnonFramework_Exception {};
 class SihnonFramework_Exception_UnknownSetting         extends SihnonFramework_Exception_ConfigException {};
+class SihnonFramework_Exception_ReadOnlyConfigBackend  extends SihnonFramework_Exception_ConfigException {};
+class SihnonFramework_Exception_SettingExists          extends SihnonFramework_Exception_ConfigException {};
+class SihnonFramework_Exception_UnknownSettingType     extends SihnonFramework_Exception_ConfigException {};
 
 class SihnonFramework_Exception_CacheException         extends SihnonFramework_Exception {};
 class SihnonFramework_Exception_InvalidCacheDir        extends SihnonFramework_Exception_CacheException {};

@@ -1,6 +1,6 @@
 <?php
 
-class SihnonFramework_Config_Plugin_Database extends Sihnon_PluginBase implements Sihnon_Config_IPlugin {
+class SihnonFramework_Config_Plugin_Database extends Sihnon_PluginBase implements Sihnon_Config_IPlugin, Sihnon_Config_IUpdateable {
     
     /**
      * Name of this plugin
@@ -26,6 +26,21 @@ class SihnonFramework_Config_Plugin_Database extends Sihnon_PluginBase implement
     
     public function save() {
         throw new Sihnon_Exception_NotImplemented();
+    }
+    
+    public function set($key, $value) {
+        return $this->database->update("UPDATE `{$this->table}` SET `value`=:value WHERE `name`=:name", array(
+            array('name' => 'name',  'value' => $key,   'type' => PDO::PARAM_STR),
+            array('name' => 'value', 'value' => $value, 'type' => PDO::PARAM_STR),
+        ));
+    }
+    
+    public function add($key, $type, $value) {
+        return $this->database->insert("INSERT INTO `{$this->table}` (`name`,`value`,`type`) VALUES(:name,:value,:type)", array(
+            array('name' => 'name',  'value' => $key,   'type' => PDO::PARAM_STR),
+            array('name' => 'value', 'value' => $value, 'type' => PDO::PARAM_STR),
+            array('name' => 'type',  'value' => $type,  'type' => PDO::PARAM_STR),
+        ));
     }
     
 }
