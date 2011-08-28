@@ -167,10 +167,11 @@ class SihnonFramework_Database {
                 $this->reconnect();
                 return $this->insert($sql, $bind_params, ++$count);
             } else {
-                var_dump($std_code, $driver_code, $message);
                 throw new Sihnon_Exception_DatabaseQueryFailed($message, $driver_code);
             }
         }
+        
+        return $result;
     }
     
     public function update($sql, $bind_params = null, $count = 0) {
@@ -197,6 +198,8 @@ class SihnonFramework_Database {
                 throw new Sihnon_Exception_DatabaseQueryFailed($message, $driver_code);
             }
         }
+        
+        return $result;
     }
 
     public function errorInfo() {
