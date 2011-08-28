@@ -370,6 +370,25 @@ class SihnonFramework_Main {
         return $size;
     }
     
+    public static function isClassConstantValue($class, $prefix, $value) {
+        try {
+            $reflected = new ReflectionClass($class);
+        } catch (ReflectionException $e) {
+            throw new Sihnon_Exception_ClassNotFound($class);
+        }
+        
+        $constants = $reflected->getConstants();
+        foreach ($constants as $const_name => $const_value) {
+            if (preg_match("/{$prefix}/", $const_name)) {
+                if ($value == $const_value) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
 }
 
 SihnonFramework_Main::initialise();
