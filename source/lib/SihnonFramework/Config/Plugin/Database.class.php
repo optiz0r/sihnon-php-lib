@@ -49,6 +49,13 @@ class SihnonFramework_Config_Plugin_Database extends Sihnon_PluginBase implement
         ));
     }
     
+    public function rename($key, $new_key) {
+        return $this->database->update("UPDATE `{$this->table}` SET `name`=:new_name WHERE `name`=:name LIMIT 1", array(
+            array('name' => 'new_name', 'value' => $new_key, 'type' => PDO::PARAM_STR),
+            array('name' => 'name',     'value' => $key,     'type' => PDO::PARAM_STR),
+        ));
+    }
+    
 }
 
 ?>

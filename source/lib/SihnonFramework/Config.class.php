@@ -167,6 +167,22 @@ class SihnonFramework_Config {
         // Persist the change into the backend
         return $this->backend->remove($key);
     }
+    
+    public function rename($key, $new_key) {
+        if ( ! ($this->backend instanceof Sihnon_Config_IUpdateable)) {
+            throw new Sihnon_Exception_ReadOnlyConfigBackend();
+        }
+        if (!isset($this->settings[$key])) {
+            throw new Sihnon_Exception_UnknownSetting($key);
+        }
+
+        // Rename the setting for this run
+        $this->settings[$new_key] = $this->settings[$key];
+        unset($this->settings[$key]); 
+        
+        // Persist the change into the backend
+        return $this->backend->rename($key, $new_key);
+    }
 
 };
 

@@ -29,6 +29,15 @@ interface SihnonFramework_Config_IUpdateable {
      */
     public function remove($key);
     
+    /**
+     * 
+     * Rename a setting
+     * @param string $key
+     * @param string $new_key
+     * @return bool
+     */
+    public function rename($key, $new_key);
+    
 }
 
 ?>
