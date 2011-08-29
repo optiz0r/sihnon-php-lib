@@ -278,7 +278,16 @@ class SihnonFramework_Main {
             return realpath($relative_path);
         }
         
-        $absolute_path = getcwd() . DIRECTORY_SEPARATOR . $relative_path;
+        // Use the base path in order of precedence
+        $prefix = '';
+        if (isset($_SERVER['SihnonFramework_Base'])) {
+            $prefix = $_SERVER['SihnonFramework_Base'];
+        } elseif (defined('SihnonFramework_Base')) {
+            $prefix = SihnonFramework_Base;
+        } else {
+            $prefix = getcwd() . DIRECTORY_SEPARATOR;
+        }
+        $absolute_path = $prefix . $relative_path;
         return realpath($absolute_path);
     }
     
