@@ -33,6 +33,12 @@ class SihnonFramework_Config {
     const TYPE_STRING_LIST = 'array(string)';
     
     /**
+     * Hash type with string keys and mixed-type values
+     * @var array(string=>mixed)
+     */
+    const TYPE_HASH = 'hash';
+    
+    /**
      * Backend to be used for this Config object
      * @var Sihnon_Config_IPlugin
      */
@@ -58,9 +64,11 @@ class SihnonFramework_Config {
     
     protected static function pack($type, $value) {
         switch ($type) {
-            case static::TYPE_STRING_LIST: {
+            case static::TYPE_STRING_LIST:
                 return join("\n", $value);
-            } break;
+            
+            case static::TYPE_HASH:
+                return join("\n", array_map(function($k, $v) { return "{$k}:{$v}"; }, array_keys($value), array_values($value)));
             
             default: {
                 return $value;
@@ -70,8 +78,16 @@ class SihnonFramework_Config {
     
     protected static function unpack($type, $value) {
         switch ($type) {
-            case self::TYPE_STRING_LIST:
+            case static::TYPE_STRING_LIST:
+                // foo
+                // bar
                 return array_map('trim', explode("\n", $value));
+                
+            case static::TYPE_HASH:
+                // foo:bar
+                // baz:quz
+                preg_match_all("/^([^:]+):(.+)$/m", $value, $pairs);
+                return array_combine($pairs[1], $pairs[2]);
                 
             default:
                return $value;
