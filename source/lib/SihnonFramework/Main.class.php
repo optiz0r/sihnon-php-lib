@@ -333,32 +333,74 @@ class SihnonFramework_Main {
         return $default;
     }
 
-    public static function formatDuration($time) {
-        if (is_null($time)) {
-            return 'unknown';
-        }
+	public static function formatDuration($seconds, $fuzziness = 0) {
+	    if (is_null($seconds)) {
+	        return 'indeterminate time';
+	    }
+	    
+	    $labels = array('second', 'minute', 'hour', 'day', 'week', 'month', 'year');
+	    $pluralLabels = array('seconds', 'minutes', 'hours', 'days', 'weeks', 'months', 'years');
+	    $limits = array(1, 60, 3600, 86400, 604800, 2592000, 31556926, PHP_INT_MAX);
+	    $components = array(0, 0, 0, 0, 0, 0, 0);
+	    
+	    $workingTime = $seconds;
+	    
+	    $result = "";
+	    $ptr = count($labels) - 1;
 
-        $labels = array('seconds', 'minutes', 'hours', 'days', 'weeks', 'months', 'years');
-        $limits = array(1, 60, 3600, 86400, 604800, 2592000, 31556926, PHP_INT_MAX);
+	    while ($ptr >= 0 && $workingTime < $limits[$ptr]) {
+	        --$ptr;
+	    }
+	    $mostSignificantPtr = $ptr;
+	    
+	    // Convert the value into components using the remaining labels
+	    while ($ptr >= 0) {
+	        $unitTime = floor($workingTime / $limits[$ptr]);
+	        $workingTime -= $unitTime * $limits[$ptr];
+	        $components[$ptr] = $unitTime;
+	        --$ptr;
+	    }
+	    
+	    $componentsUsed = 0;
+	    $approximate = false;
+	    $lastComponent = false;
+	    $ptr = $mostSignificantPtr;
+	    while ($ptr >= 0) {
+	        if ($fuzziness && $componentsUsed >= $fuzziness) {
+	            break;
+	        } elseif ($ptr == 0 || ($fuzziness && $componentsUsed == $fuzziness-1)) {
+	            $lastComponent = true;
+	        }
+	        
+	        $component = $components[$ptr];
+	        if ($component) {
+    	        // If we're going to hide the next value, take its component into account here
+    	        if ($lastComponent && $ptr > 0) {
+    	            $component += round($components[$ptr-1] / $limits[$ptr]);
+    	            $approximate = true;
+    	        }
+    	        
+    	        if ($lastComponent && $ptr < $mostSignificantPtr) {
+    	            $result .= ' and';
+    	        }
+    	        
+    	        $result .= ' ' . $component . ' ' . ($component == 1 ? $labels[$ptr] : $pluralLabels[$ptr]);
+	        
+	        }
+	        
+	        // Increment even if we've hidden this component because it's zero
+	        // Then we don't end up with overly precise times like '2 years and 1 second'
+	        ++$componentsUsed;
+            
+	        --$ptr;
+	    }
 
-        $working_time = $time;
+	    if ($approximate) {
+	        $result = 'approximately ' . $result;
+	    }
 
-        $result = "";
-        $ptr = count($labels) - 1;
-
-        while ($ptr >= 0 && $working_time < $limits[$ptr]) {
-            --$ptr;
-        }
-
-        while ($ptr >= 0) {
-            $unit_time = floor($working_time / $limits[$ptr]);
-            $working_time -= $unit_time * $limits[$ptr];
-            $result = $result . ' ' . $unit_time . ' ' . $labels[$ptr];
-            --$ptr;
-        }
-
-        return $result;
-    }
+	    return $result;
+	}
     
     public static function formatFilesize($bytes) {
         if (is_null($bytes)) {
