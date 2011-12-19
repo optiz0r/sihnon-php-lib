@@ -141,7 +141,7 @@ abstract class SihnonFramework_DatabaseObject {
         $id_list = join(', ', array_map(function($v) { return "`{$v}`"; }, $fields));
         $value_list = join(', ', array_map(function($v) { return ":{$v}"; }, $fields));
         
-        $database->insert('INSERT INTO `'.static::table().'` ({$id_list}) VALUES({$value_list})', $params);
+        $database->insert("INSERT INTO `".static::table()."` ({$id_list}) VALUES({$value_list})", $params);
     
         $this->id = $database->lastInsertId();
     }
@@ -169,10 +169,10 @@ abstract class SihnonFramework_DatabaseObject {
             }
         }
         
-        $id_list = join(', ', array_map(function($v) { return "`{$v}`"; }, $fields));
+        $id_list = join(', ', array_map(function($v) { return "`{$v}`=:{$v}"; }, $fields));
         $value_list = join(', ', array_map(function($v) { return ":{$v}"; }, $fields));
         
-        $database->update('UPDATE `'.static::table().'` ({$id_list}) VALUES({$value_list}) WHERE `id`=:id', $params);
+        $database->update("UPDATE `".static::table()."` SET {$id_list} WHERE `id`=:id", $params);
     }
     
     public function delete() {
