@@ -39,4 +39,9 @@ class SihnonFramework_Exception_LogException           extends SihnonFramework_E
 class SihnonFramework_Exception_LogFileNotWriteable    extends SihnonFramework_Exception_LogException {};
 class SihnonFramework_Exception_InvalidLog             extends SihnonFramework_Exception_LogException {};
 
+class SihnonFramework_Exception_AuthException          extends SihnonFramework_Exception {};
+class SihnonFramework_Exception_UnknownUser            extends SihnonFramework_Exception_AuthException {};
+class SihnonFramework_Exception_IncorrectPassword      extends SihnonFramework_Exception_AuthException {};
+
+
 ?>

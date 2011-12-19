@@ -17,6 +17,8 @@ class SihnonFramework_Main {
     protected $database;
     protected $log;
     protected $cache;
+    protected $session;
+    protected $auth;
     
     protected $base_uri;
 
@@ -38,6 +40,9 @@ class SihnonFramework_Main {
         $this->log    = new Sihnon_Log($this->config);
                 
         $this->cache  = new Sihnon_Cache($this->config);
+        
+        $this->session = new Sihnon_Session($this->config);
+        $this->auth = new Sihnon_Auth($this->config, $this->session);
     }
 
     /**
@@ -84,6 +89,22 @@ class SihnonFramework_Main {
      */
     public function cache() {
         return $this->cache;
+    }
+    
+    /**
+     * 
+     * @return SihnonFramework_Session
+     */
+    public function session() {
+        return $this->session;
+    }
+    
+    /**
+     * 
+     * @return SihnonFramework_Auth
+     */
+    public function auth() {
+        return $this->auth;
     }
     
     public function baseUri() {
