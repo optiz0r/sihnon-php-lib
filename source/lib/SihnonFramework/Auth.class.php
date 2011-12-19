@@ -18,12 +18,16 @@ class SihnonFramework_Auth {
     }
     
     protected function init($backend) {
-        $this->backend = Sihnon_Auth_PluginFactory::create($config, $backend);
+        $this->backend = Sihnon_Auth_PluginFactory::create($this->config, $backend);
         $this->restoreSession();
     }
     
     public function isAuthenticated() {
         return $this->authenticated;
+    }
+    
+    public function authenticatedUser() {
+        return $this->user;
     }
     
     public function saveSession() {
@@ -79,6 +83,10 @@ class SihnonFramework_Auth {
         $this->backend->removeUser($this->user);
         $this->user = null;
         $this->authenticated = false;
+    }
+    
+    public function changePassword($new_password) {
+        $this->backend->changePassword($this->user, $new_password);
     }
     
     /*
