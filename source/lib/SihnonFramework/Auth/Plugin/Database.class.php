@@ -31,7 +31,11 @@ class SihnonFramework_Auth_Plugin_Database
     }
     
     public function authenticate($username, $password) {
-        $user = Sihnon_Auth_Plugin_Database_User::from('username', $username);
+        try {
+            $user = Sihnon_Auth_Plugin_Database_User::from('username', $username);
+        } catch (Sihnon_Exception_ResultCountMismatch $e) {
+            throw new Sihnon_Exception_UnknownUser();
+        }
         
         if ( ! $user->checkPassword($password)) {
             throw new Sihnon_Exception_IncorrectPassword();
