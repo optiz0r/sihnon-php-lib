@@ -41,7 +41,9 @@ class SihnonFramework_Page {
         } catch (SihnonFramework_Exception_AbortEntirePage $e) {
             return false;
         } catch (SihnonFramework_Exception_FileNotFound $e) {
-            $content = $this->render('errors/404.tpl', 'errors/404.php');            
+            $content = $this->render('errors/404.tpl', 'errors/404.php');
+        } catch (SihnonFramework_Exception_NotAuthorised $e) {
+            $content = $this->render('errors/401.tpl', 'errors/404.php');
         } catch (SihnonFramework_Exception $e) {
             $content = $this->render('errors/unhandled-exception.tpl', 'errors/unhandled-exception.php', array(
                 'exception' => $e,

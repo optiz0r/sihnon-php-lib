@@ -13,6 +13,7 @@ class SihnonFramework_Exception_TemplateException      extends SihnonFramework_E
 class SihnonFramework_Exception_AbortEntirePage        extends SihnonFramework_Exception_TemplateException {}; 
 class SihnonFramework_Exception_Unauthorized           extends SihnonFramework_Exception_TemplateException {};
 class SihnonFramework_Exception_FileNotFound           extends SihnonFramework_Exception_TemplateException {};
+class SihnonFramework_Exception_NotAuthorised          extends SihnonFramework_Exception_TemplateException {};
 class SihnonFramework_Exception_InvalidParameters      extends SihnonFramework_Exception_TemplateException {};
 
 class SihnonFramework_Exception_DatabaseException      extends SihnonFramework_Exception {};
