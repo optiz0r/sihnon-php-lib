@@ -79,7 +79,7 @@ class SihnonFramework_Auth_Plugin_Database
      */
 
     public function hasPermission(Sihnon_Auth_IUser $user, $permission) {
-        return new $user->hasPermission($permission);
+        return $user->hasPermission($permission);
     }
     
 }
