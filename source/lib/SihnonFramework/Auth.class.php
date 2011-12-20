@@ -56,6 +56,10 @@ class SihnonFramework_Auth {
      * IPlugin methods
      */
     
+    public function listUsers() {
+        return $this->backend->listUsers();
+    }
+    
     public function authenticate($username, $password) {
         $this->user = $this->backend->authenticate($username, $password);
         $this->authenticated = true;
