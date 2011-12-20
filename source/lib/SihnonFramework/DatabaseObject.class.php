@@ -79,7 +79,7 @@ abstract class SihnonFramework_DatabaseObject {
         return $objects;
     }
     
-    public static function all_for($field, $value, $view = null) {
+    public static function all_for($field, $value, $view = null, $additional_conditions = null, $additional_params = null) {
         $database = SihnonFramework_Main::instance()->database();
         
         if ($view === null) {
@@ -99,9 +99,18 @@ abstract class SihnonFramework_DatabaseObject {
         
         $field_list = join(', ', array_map(function($v) { return "`{$v}`"; }, $fields));$objects = array();
         
-        foreach ($database->selectList("SELECT {$field_list} FROM `{$view}` WHERE `{$field}`=:{$field} ORDER BY `id` DESC", array(
-                array('name' => $field, 'value' => $value, 'type' => PDO::PARAM_STR),
-            )) as $row) {
+        $params = array(
+            array('name' => $field, 'value' => $value, 'type' => PDO::PARAM_STR),
+        );
+        if ($additional_params) {
+            $params = array_merge($params, $additional_params);
+        }
+        
+        if ($additional_conditions) {
+            $conditions = "AND ({$additional_conditions}) ";
+        }
+        
+        foreach ($database->selectList("SELECT {$field_list} FROM `{$view}` WHERE `{$field}`=:{$field} {$conditions} ORDER BY `id` DESC", $params) as $row) {
             $objects[] = static::fromDatabaseRow($row);
         }
         
