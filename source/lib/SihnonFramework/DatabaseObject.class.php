@@ -79,7 +79,7 @@ abstract class SihnonFramework_DatabaseObject {
         return $objects;
     }
     
-    public static function all_for($field, $value, $view = null, $additional_conditions = null, $additional_params = null) {
+    public static function allFor($field, $value, $view = null, $additional_conditions = null, $additional_params = null) {
         $database = SihnonFramework_Main::instance()->database();
         
         if ($view === null) {
@@ -155,7 +155,7 @@ abstract class SihnonFramework_DatabaseObject {
         $this->id = $database->lastInsertId();
     }
     
-    protected function save() {
+    public function save() {
         $database = SihnonFramework_Main::instance()->database();
         
         $class = new ReflectionClass(get_called_class());

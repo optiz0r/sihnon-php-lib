@@ -44,7 +44,7 @@ class SihnonFramework_Auth_Plugin_Database_User extends Sihnon_DatabaseObject im
     
     public function groups($ignore_cache = false) {
         if ($this->groups === null || $ignore_cache) {
-            $this->groups = Sihnon_Auth_Plugin_Database_Group::all_for('user', $this->id, 'groups_by_user');
+            $this->groups = Sihnon_Auth_Plugin_Database_Group::allFor('user', $this->id, 'groups_by_user');
         }
         
         return $this->groups;
@@ -52,7 +52,7 @@ class SihnonFramework_Auth_Plugin_Database_User extends Sihnon_DatabaseObject im
     
     public function permissions($ignore_cache = false) {
         if ($this->permissions === null || $ignore_cache) {
-            $this->permissions = Sihnon_Auth_Plugin_Database_Permission::all_for('user', $this->id, 'permissions_by_user');
+            $this->permissions = Sihnon_Auth_Plugin_Database_Permission::allFor('user', $this->id, 'permissions_by_user');
         }
         
         return $this->permissions;
