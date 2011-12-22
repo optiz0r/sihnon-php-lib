@@ -16,7 +16,7 @@ class SihnonFramework_Auth_Plugin_Database_User extends Sihnon_DatabaseObject im
     protected $permissions = null;
     
     public static function exists($username) {
-        return static::exists('username', $username);
+        return parent::exists('username', $username);
     }
     
     public static function add($username, $password) {
