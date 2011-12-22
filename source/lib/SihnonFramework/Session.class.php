@@ -35,7 +35,7 @@ class SihnonFramework_Session {
         $this->dirty = true;
     }
     
-    public function get($name, $value, $default = null) {
+    public function get($name, $default = null) {
         if ( ! $this->exists($name)) {
             return $default;
         }
