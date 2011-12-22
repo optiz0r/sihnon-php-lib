@@ -106,6 +106,7 @@ abstract class SihnonFramework_DatabaseObject {
             $params = array_merge($params, $additional_params);
         }
         
+        $conditions = '';
         if ($additional_conditions) {
             $conditions = "AND ({$additional_conditions}) ";
         }
