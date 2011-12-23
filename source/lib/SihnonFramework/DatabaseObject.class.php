@@ -68,18 +68,7 @@ abstract class SihnonFramework_DatabaseObject {
      * 
 	 * @return SihnonFramework_DatabaseObject
      */
-    public static function all() {
-        $database = SihnonFramework_Main::instance()->database();
-        
-        $objects = array();
-        foreach ($database->selectList('SELECT * FROM `'.static::table().'` WHERE `id` > 0 ORDER BY `id` DESC') as $row) {
-            $objects[] = static::fromDatabaseRow($row);
-        }
-    
-        return $objects;
-    }
-    
-    public static function allFor($field, $value, $view = null, $additional_conditions = null, $additional_params = null) {
+    public static function all($view = null, $additional_conditions = null, $additional_params = null) {
         $database = SihnonFramework_Main::instance()->database();
         
         if ($view === null) {
@@ -97,11 +86,9 @@ abstract class SihnonFramework_DatabaseObject {
             }
         }
         
-        $field_list = join(', ', array_map(function($v) { return "`{$v}`"; }, $fields));$objects = array();
+        $field_list = join(', ', array_map(function($v) { return "`{$v}`"; }, $fields));
         
-        $params = array(
-            array('name' => $field, 'value' => $value, 'type' => PDO::PARAM_STR),
-        );
+        $params = array();
         if ($additional_params) {
             $params = array_merge($params, $additional_params);
         }
@@ -111,11 +98,29 @@ abstract class SihnonFramework_DatabaseObject {
             $conditions = "AND ({$additional_conditions}) ";
         }
         
-        foreach ($database->selectList("SELECT {$field_list} FROM `{$view}` WHERE `{$field}`=:{$field} {$conditions} ORDER BY `id` DESC", $params) as $row) {
+        $objects = array();
+        $sql = "SELECT {$field_list} FROM `{$view}` WHERE `id` > 0 {$conditions} ORDER BY `id` DESC";
+        foreach ($database->selectList($sql, $params) as $row) {
             $objects[] = static::fromDatabaseRow($row);
         }
-        
+    
         return $objects;
+    }
+    
+    public static function allFor($field, $value, $view = null, $additional_conditions = null, $additional_params = null) {
+        $conditions = "`{$field}`=:{$field} ";
+        if ($additional_conditions) {
+            $conditions .= "AND ({$additional_conditions}) ";
+        }
+        
+        $params = array(
+            array('name' => $field, 'value' => $value, 'type' => PDO::PARAM_STR),
+        );
+        if ($additional_params) {
+            $params = array_merge($params, $additional_params);
+        }
+         
+        return static::all($view, $conditions, $params);
     }
     
     public static function exists($field, $value, $view = null) {
