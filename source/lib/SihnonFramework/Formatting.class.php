@@ -10,7 +10,7 @@ class SihnonFramework_Formatting {
         return SihnonFramework_Main::formatDuration($seconds, $fuzziness);
     }
     
-    public static function pluralise($singular, $multiple, $count) {
+    public static function pluralise($count, $singular, $multiple) {
         if ($count == 1) {
             return $singular;
         } else{
