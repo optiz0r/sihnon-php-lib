@@ -9,7 +9,7 @@ class SihnonFramework_Validation_Text extends SihnonFramework_Validation {
     const Symbol       = 0x08;
     const Whitespace   = 0x16;
     
-    protected static $charsets = array(
+    protected static $contents = array(
         static::Alphabetical => ':alpha:',
         static::Digit        => ':digit:',
         static::Numeric      => ':digit:\.-',
@@ -17,8 +17,8 @@ class SihnonFramework_Validation_Text extends SihnonFramework_Validation {
         static::Whitespace   => ':space:',
     );
 
-    public static function charset($inputs, $charset = static::Defaults) {
-        static::pattern($inputs, static::buildCharsetPattern($charset));
+    public static function content($inputs, $content = static::Defaults) {
+        static::pattern($inputs, static::buildContentPattern($content));
     }
     
     public static function length($inputs, $min_length = null, $max_length = null) {
@@ -51,10 +51,10 @@ class SihnonFramework_Validation_Text extends SihnonFramework_Validation {
         }
     }
     
-    protected static function buildCharsetPattern($charset) {
+    protected static function buildContentPattern($contents) {
         $classes = '';
-        foreach (static::$charsets as $set => $class) {
-            if ($charset & $set) {
+        foreach (static::$contents as $set => $class) {
+            if ($contents & $set) {
                 $classes .= $class;
             }
         }
