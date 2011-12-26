@@ -10,14 +10,14 @@ class SihnonFramework_Validation_Text extends SihnonFramework_Validation {
     const Whitespace   = 0x16;
     
     protected static $contents = array(
-        static::Alphabetical => ':alpha:',
-        static::Digit        => ':digit:',
-        static::Numeric      => ':digit:\.-',
-        static::Symbol       => ':punct:',
-        static::Whitespace   => ':space:',
+        self::Alphabetical => ':alpha:',
+        self::Digit        => ':digit:',
+        self::Numeric      => ':digit:\.-',
+        self::Symbol       => ':punct:',
+        self::Whitespace   => ':space:',
     );
 
-    public static function content($inputs, $content = static::Defaults) {
+    public static function content($inputs, $content = self::Defaults) {
         static::pattern($inputs, static::buildContentPattern($content));
     }
     
