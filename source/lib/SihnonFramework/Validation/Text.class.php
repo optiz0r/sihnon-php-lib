@@ -17,25 +17,37 @@ class SihnonFramework_Validation_Text extends SihnonFramework_Validation {
         static::Whitespace   => ':space:',
     );
 
-    public static function charset($input, $charset = static::Defaults) {
-        static::pattern($input, static::buildCharsetPattern($charset));
+    public static function charset($inputs, $charset = static::Defaults) {
+        static::pattern($inputs, static::buildCharsetPattern($charset));
     }
     
-    public static function length($input, $min_length = null, $max_length = null) {
-        $length = strlen($input);
-        
-        if ($min_length !== null && $length < $min_length) {
-            throw new SihnonFramework_Exception_InvalidLength();
+    public static function length($inputs, $min_length = null, $max_length = null) {
+        if ( ! is_array($inputs)) {
+            $inputs = array($inputs);
         }
         
-        if ($max_length !== null && $length > $max_length) {
-            throw new SihnonFramework_Exception_InvalidLength();
+        foreach ($inputs as $input) { 
+            $length = strlen($input);
+        
+            if ($min_length !== null && $length < $min_length) {
+                throw new SihnonFramework_Exception_InvalidLength();
+            }
+            
+            if ($max_length !== null && $length > $max_length) {
+                throw new SihnonFramework_Exception_InvalidLength();
+            }
         }
     }
     
-    public static function pattern($input, $pattern) {
-        if ( ! preg_match($pattern, $input)) {
-            throw new SihnonFramework_Exception_InvalidContent();
+    public static function pattern($inputs, $pattern) {
+        if ( ! is_array($inputs)) {
+            $inputs = array($inputs);
+        }
+        
+        foreach ($inputs as $input) {
+            if ( ! preg_match($pattern, $input)) {
+                throw new SihnonFramework_Exception_InvalidContent();
+            }
         }
     }
     
