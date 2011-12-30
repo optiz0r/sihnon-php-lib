@@ -23,7 +23,8 @@ class SihnonFramework_Main {
     protected $base_uri;
 
     protected function __construct() {
-        $this->base_uri = dirname($_SERVER['SCRIPT_NAME']) . '/';
+        $dirname = dirname($_SERVER['SCRIPT_NAME']);
+        $this->base_uri =  $dirname == '/' ? '/' : $dirname . '/';
     }
     
     protected function init() {
