@@ -35,7 +35,7 @@ class SihnonFramework_ForegroundTask {
         );
         
         $pipes = array();
-        $process = proc_open($command, $descriptors, $pipes);
+        $process = proc_open($command, $descriptors, $pipes, $cwd, $env);
         
         stream_set_blocking($pipes[self::PIPE_STDIN], 0); // Make stdin/stdout/stderr non-blocking
         stream_set_blocking($pipes[self::PIPE_STDOUT], 0);
