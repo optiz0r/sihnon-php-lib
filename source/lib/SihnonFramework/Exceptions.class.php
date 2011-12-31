@@ -48,4 +48,8 @@ class SihnonFramework_Exception_ValidationException    extends SihnonFramework_E
 class SihnonFramework_Exception_InvalidContent         extends SihnonFramework_Exception_ValidationException {};
 class SihnonFramework_Exception_InvalidLength          extends SihnonFramework_Exception_ValidationException {};
 
+class SihnonFramework_Exception_DaemonException        extends SihnonFramework_Exception {};
+class SihnonFramework_Exception_AlreadyRunning         extends SihnonFramework_Exception_DaemonException {};
+class SihnonFramework_Exception_LockingFailed          extends SihnonFramework_Exception_DaemonException {};
+
 ?>
