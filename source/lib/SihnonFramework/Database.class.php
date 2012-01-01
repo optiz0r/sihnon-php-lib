@@ -68,7 +68,7 @@ class SihnonFramework_Database {
     }
     
     private function query($sql, $count = 0) {
-        $results = $this->dbh->query($sql);
+        $results = $this->dbh->query($sql, PDO::FETCH_ASSOC);
         if (! $results) {
             list($std_code, $driver_code, $message) = $this->dbh->errorInfo();
             
@@ -123,7 +123,7 @@ class SihnonFramework_Database {
                 }
             }
             
-			return $stmt->fetchAll();
+			return $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 		} else {
 			$results = array();

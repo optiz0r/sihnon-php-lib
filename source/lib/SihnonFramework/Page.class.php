@@ -7,10 +7,14 @@ class SihnonFramework_Page {
 
     private $page;
 
-    public function __construct(Smarty $smarty, SihnonFramework_RequestParser $request) {
+    public function __construct(Smarty $smarty, SihnonFramework_RequestParser $request, $page = null) {
         $this->smarty = $smarty;
         $this->request = $request;
-        $this->page = $request->page();
+        $this->page = $page;
+        
+        if ($page === null) {
+            $this->page = $request->page();
+        }
     }
 
     public function page() {
@@ -20,22 +24,33 @@ class SihnonFramework_Page {
     public function template_filename() {
         return $this->page . '.tpl';
     }
+    
+    public function code_filename() {
+        return $this->page . '.php';
+    }
 
     public function evaluate($template_variables = array()) {
-        $code_filename     = $this->page . '.php';
+        $code_filename     = $this->code_filename();
         $template_filename = $this->template_filename();
 
+        $content = '';
         try {
-            $this->render($template_filename, $code_filename, $template_variables);
+            $this->smarty->assign('page', $this);
+            $this->smarty->assign('requested_page', $this->page);
+            $content = $this->render($template_filename, $code_filename, $template_variables);
         } catch (SihnonFramework_Exception_AbortEntirePage $e) {
             return false;
         } catch (SihnonFramework_Exception_FileNotFound $e) {
-            $this->render('errors/404.tpl', 'errors/404.php');
+            $content = $this->render('errors/404.tpl', 'errors/404.php');
+        } catch (SihnonFramework_Exception_NotAuthorised $e) {
+            $content = $this->render('errors/401.tpl', 'errors/404.php');
         } catch (SihnonFramework_Exception $e) {
-            $this->render('errors/unhandled-exception.tpl', 'errors/unhandled-exception.php', array(
+            $content = $this->render('errors/unhandled-exception.tpl', 'errors/unhandled-exception.php', array(
                 'exception' => $e,
             ));
         } 
+        
+        $this->smarty->assign('page_content', $content);
         
         return true;
     }
@@ -57,10 +72,13 @@ class SihnonFramework_Page {
             include $real_code_filename;
         }
         
-        $this->smarty->assign('requested_page', $this->page);
-        
         // Now execute the template itself, which will render the results of the code file
-        $this->smarty->assign('page_content', $this->smarty->fetch($template_filename));
+        return $this->smarty->fetch($template_filename);
+    }
+    
+    public function include_template($page, $template_variables = array()) {
+        $subpage = new Sihnon_Page($this->smarty, $this->request, $page);
+        return $subpage->render($subpage->template_filename(), $subpage->code_filename(), $template_variables);
     }
     
     public static function redirect($relative_url) {

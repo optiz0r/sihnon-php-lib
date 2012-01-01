@@ -13,6 +13,7 @@ class SihnonFramework_Exception_TemplateException      extends SihnonFramework_E
 class SihnonFramework_Exception_AbortEntirePage        extends SihnonFramework_Exception_TemplateException {}; 
 class SihnonFramework_Exception_Unauthorized           extends SihnonFramework_Exception_TemplateException {};
 class SihnonFramework_Exception_FileNotFound           extends SihnonFramework_Exception_TemplateException {};
+class SihnonFramework_Exception_NotAuthorised          extends SihnonFramework_Exception_TemplateException {};
 class SihnonFramework_Exception_InvalidParameters      extends SihnonFramework_Exception_TemplateException {};
 
 class SihnonFramework_Exception_DatabaseException      extends SihnonFramework_Exception {};
@@ -21,6 +22,7 @@ class SihnonFramework_Exception_DatabaseConnectFailed  extends SihnonFramework_E
 class SihnonFramework_Exception_NoDatabaseConnection   extends SihnonFramework_Exception_DatabaseException {};
 class SihnonFramework_Exception_DatabaseQueryFailed    extends SihnonFramework_Exception_DatabaseException {};
 class SihnonFramework_Exception_ResultCountMismatch    extends SihnonFramework_Exception_DatabaseException {};
+class SihnonFramework_Exception_InvalidProperty        extends SihnonFramework_Exception_DatabaseException {};
 
 class SihnonFramework_Exception_ConfigException        extends SihnonFramework_Exception {};
 class SihnonFramework_Exception_UnknownSetting         extends SihnonFramework_Exception_ConfigException {};
@@ -37,5 +39,17 @@ class SihnonFramework_Exception_InvalidPluginName      extends SihnonFramework_E
 class SihnonFramework_Exception_LogException           extends SihnonFramework_Exception {};
 class SihnonFramework_Exception_LogFileNotWriteable    extends SihnonFramework_Exception_LogException {};
 class SihnonFramework_Exception_InvalidLog             extends SihnonFramework_Exception_LogException {};
+
+class SihnonFramework_Exception_AuthException          extends SihnonFramework_Exception {};
+class SihnonFramework_Exception_UnknownUser            extends SihnonFramework_Exception_AuthException {};
+class SihnonFramework_Exception_IncorrectPassword      extends SihnonFramework_Exception_AuthException {};
+
+class SihnonFramework_Exception_ValidationException    extends SihnonFramework_Exception {};
+class SihnonFramework_Exception_InvalidContent         extends SihnonFramework_Exception_ValidationException {};
+class SihnonFramework_Exception_InvalidLength          extends SihnonFramework_Exception_ValidationException {};
+
+class SihnonFramework_Exception_DaemonException        extends SihnonFramework_Exception {};
+class SihnonFramework_Exception_AlreadyRunning         extends SihnonFramework_Exception_DaemonException {};
+class SihnonFramework_Exception_LockingFailed          extends SihnonFramework_Exception_DaemonException {};
 
 ?>
