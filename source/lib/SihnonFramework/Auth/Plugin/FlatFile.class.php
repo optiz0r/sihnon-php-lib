@@ -47,7 +47,7 @@ class SihnonFramework_Auth_Plugin_FlatFile
     */
     
     public function addUser($username, $password) {
-        return Sihnon_Auth_Plugin_Config_User::add($username, $password);
+        return Sihnon_Auth_Plugin_FlatFile_User::add($username, $password);
     }
     
     public function removeUser(Sihnon_Auth_IUser $user) {
