@@ -52,4 +52,9 @@ class SihnonFramework_Exception_DaemonException        extends SihnonFramework_E
 class SihnonFramework_Exception_AlreadyRunning         extends SihnonFramework_Exception_DaemonException {};
 class SihnonFramework_Exception_LockingFailed          extends SihnonFramework_Exception_DaemonException {};
 
+class SihnonFramework_Exception_LDAPException          extends SihnonFramework_Exception {};
+class SihnonFramework_Exception_LDAPConnectionFailed   extends SihnonFramework_Exception_LDAPException {};
+class SihnonFramework_Exception_LDAPSecureConnectionFailed extends SihnonFramework_Exception_LDAPException {};
+class SihnonFramework_Exception_LDAPBindFailed         extends SihnonFramework_Exception_LDAPException {}; 
+
 ?>
