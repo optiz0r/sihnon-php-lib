@@ -3,8 +3,8 @@
 class SihnonFramework_Auth_Plugin_FlatFile
     extends    Sihnon_PluginBase
     implements Sihnon_Auth_IPlugin,
-    Sihnon_Auth_IUpdateable,
-    Sihnon_Auth_IPermissionable {
+               Sihnon_Auth_IUpdateable,
+               Sihnon_Auth_IPermissionable {
 
     protected $config;
     
@@ -47,7 +47,7 @@ class SihnonFramework_Auth_Plugin_FlatFile
     */
     
     public function addUser($username, $password) {
-        return Sihnon_Auth_Plugin_Database_User::add($username, $password);
+        return Sihnon_Auth_Plugin_Config_User::add($username, $password);
     }
     
     public function removeUser(Sihnon_Auth_IUser $user) {
