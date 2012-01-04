@@ -36,7 +36,6 @@ class SihnonFramework_Auth_Plugin_Config_User implements Sihnon_Auth_IUser {
     }
     
     public function checkPassword($password) {
-        var_dump($password, sha1($password), $this->password);
         return ($this->password == sha1($password));
     }
     
