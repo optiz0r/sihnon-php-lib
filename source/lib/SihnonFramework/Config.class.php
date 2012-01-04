@@ -109,9 +109,13 @@ class SihnonFramework_Config {
      * 
      * @param string $key Name of the setting
      */
-    public function get($key) {
-        if (!isset($this->settings[$key])) {
-            throw new Sihnon_Exception_UnknownSetting($key);
+    public function get($key, $default = 'SihnonFramework_Exception_UnknownSetting') {
+        if ( ! isset($this->settings[$key])) {
+            if (is_string($default) && preg_match('/^Sihnon(Framework)?_Exception/', $default) && class_exists($default) && is_subclass_of($default, 'SihnonFramework_Exception')) {
+                throw new $default();
+            }
+            
+            return $default;
         }
 
         return static::unpack($this->settings[$key]['type'], $this->settings[$key]['value']);
