@@ -343,6 +343,22 @@ class SihnonFramework_Main {
         return true;
     }
     
+    public static function recursiveFilesize($file) {
+        $size = 0;
+        if (is_dir($file)) {
+            $objects = scandir($file);
+            foreach ($objects as $object) {
+                if ($object != "." && $object != "..") {
+                    $size += static::recursiveFilesize($file . '/' . $object);
+                }
+            }
+        } else {
+            $size += filesize($file);
+        }
+        
+        return $size;
+    }
+    
     public static function issetelse($var, $default = null) {
         if (isset($var)) {
             return $var;
@@ -434,7 +450,7 @@ class SihnonFramework_Main {
         
         $size = $bytes;
         $ptr = count($labels) - 1;
-        while ($ptr >= 0 && $bytes < $limits[$ptr]) {
+        while ($ptr > 0 && $bytes < $limits[$ptr]) {
             --$ptr;
         }
         
