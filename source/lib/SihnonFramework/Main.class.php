@@ -199,6 +199,10 @@ class SihnonFramework_Main {
                     $exceptions_filename = /*$class['subclass_dir_prefix'] .*/ preg_replace('/_/', '/', $matches[1]) . 'Exceptions.class.php'; 
                     if (stream_resolve_include_path($exceptions_filename)) {
                         require_once($exceptions_filename);
+                        // If that found the class, break here, otherwise look upstream
+                        if (class_exists($classname, false)) {
+                            return;
+                        }
                     } else {
                         // Create this class to extend the Framework parent
                         $parent_classname = preg_replace("/^{$class['subclass']}_/", "{$class['base']}_", $classname);
