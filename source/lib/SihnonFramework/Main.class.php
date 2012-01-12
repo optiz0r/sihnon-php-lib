@@ -129,6 +129,23 @@ class SihnonFramework_Main {
     }
     
     public static function errorHandler($errno, $errstr, $errfile = '', $errline = 0, $errcontext = array()) {
+        
+        $ignore_patterns = array(
+            /* Really don't consider this to be a bug, and make extensive use of this in the plugin architecture */
+            '/^Declaration of .* should be compatible with that of .*/',
+            
+            /* This error is already handled in Database, but the warning is still triggered by PHP */
+            '/^PDO::__construct.*: MySQL server has gone away/',
+        );
+        
+        foreach ($ignore_patterns as $pattern) {
+            if (preg_match($pattern, $errstr)) {
+                if (defined('Sihnon_MaskKnownErrors') && Sihnon_MaskKnownErrors) {
+                    return false;
+                }
+            }
+        }
+        
         $severity = '';
         switch ($errno) {
             case E_NOTICE:
