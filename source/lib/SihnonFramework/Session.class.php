@@ -7,11 +7,13 @@ class SihnonFramework_Session {
     protected $enabled;
     protected $state;
     protected $dirty;
+    protected $sensitive;
     
     public function __construct(Sihnon_Config $config) {
         $this->config = $config;
         $this->enabled = false;
         $this->dirty = false;
+        $this->sensitive = array();
         
         if ($this->config->exists('sessions') && $this->config->get('sessions')) {
             $this->enabled = true;
@@ -47,8 +49,12 @@ class SihnonFramework_Session {
         }
     }
     
-    public function set($name, $value) {
+    public function set($name, $value, $sensitive = false) {
         $this->state[$name] = $value;
+        if ($sensitive) {
+            $this->sensitive[$name] = true;
+        }
+        
         $this->dirty = true;
     }
     
@@ -73,6 +79,14 @@ class SihnonFramework_Session {
         if ($this->enabled) {
             session_regenerate_id(true);
         }
+        
+        // Clear any sensitive values
+        foreach ($this->sensitive as $name => $value) {
+            if ($value) {
+                $this->delete($name);
+            }
+        }
+        $this->sensitive = array();
     }
     
 }
