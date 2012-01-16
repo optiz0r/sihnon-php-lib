@@ -57,4 +57,7 @@ class SihnonFramework_Exception_LDAPConnectionFailed   extends SihnonFramework_E
 class SihnonFramework_Exception_LDAPSecureConnectionFailed extends SihnonFramework_Exception_LDAPException {};
 class SihnonFramework_Exception_LDAPBindFailed         extends SihnonFramework_Exception_LDAPException {}; 
 
+class SihnonFramework_Exception_CSRFException          extends SihnonFramework_Exception {};
+class SihnonFramework_Exception_CSRFVerificationFailure extends SihnonFramework_Exception_CSRFException {};
+
 ?>
