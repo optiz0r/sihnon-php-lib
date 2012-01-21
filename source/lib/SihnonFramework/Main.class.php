@@ -129,6 +129,23 @@ class SihnonFramework_Main {
     }
     
     public static function errorHandler($errno, $errstr, $errfile = '', $errline = 0, $errcontext = array()) {
+        
+        $ignore_patterns = array(
+            /* Really don't consider this to be a bug, and make extensive use of this in the plugin architecture */
+            '/^Declaration of .* should be compatible with that of .*/',
+            
+            /* This error is already handled in Database, but the warning is still triggered by PHP */
+            '/^PDO::__construct.*: MySQL server has gone away/',
+        );
+        
+        foreach ($ignore_patterns as $pattern) {
+            if (preg_match($pattern, $errstr)) {
+                if (defined('Sihnon_MaskKnownErrors') && Sihnon_MaskKnownErrors) {
+                    return false;
+                }
+            }
+        }
+        
         $severity = '';
         switch ($errno) {
             case E_NOTICE:
@@ -199,6 +216,10 @@ class SihnonFramework_Main {
                     $exceptions_filename = /*$class['subclass_dir_prefix'] .*/ preg_replace('/_/', '/', $matches[1]) . 'Exceptions.class.php'; 
                     if (stream_resolve_include_path($exceptions_filename)) {
                         require_once($exceptions_filename);
+                        // If that found the class, break here, otherwise look upstream
+                        if (class_exists($classname, false)) {
+                            return;
+                        }
                     } else {
                         // Create this class to extend the Framework parent
                         $parent_classname = preg_replace("/^{$class['subclass']}_/", "{$class['base']}_", $classname);
@@ -343,6 +364,22 @@ class SihnonFramework_Main {
         return true;
     }
     
+    public static function recursiveFilesize($file) {
+        $size = 0;
+        if (is_dir($file)) {
+            $objects = scandir($file);
+            foreach ($objects as $object) {
+                if ($object != "." && $object != "..") {
+                    $size += static::recursiveFilesize($file . '/' . $object);
+                }
+            }
+        } else {
+            $size += filesize($file);
+        }
+        
+        return $size;
+    }
+    
     public static function issetelse($var, $default = null) {
         if (isset($var)) {
             return $var;
@@ -434,7 +471,7 @@ class SihnonFramework_Main {
         
         $size = $bytes;
         $ptr = count($labels) - 1;
-        while ($ptr >= 0 && $bytes < $limits[$ptr]) {
+        while ($ptr > 0 && $bytes < $limits[$ptr]) {
             --$ptr;
         }
         

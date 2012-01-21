@@ -67,6 +67,7 @@ class SihnonFramework_Log_Plugin_FlatFile extends SihnonFramework_Log_PluginBase
         
         // Make some alterations for ease of display
         $fields_map['timestamp'] = date('d/m/y H:i:s', $fields_map['ctime']);
+        $fields_map['shortfile'] = basename($fields_map['file']);
         
         // split the map back out again now the modifications have been made
         $fields = array_keys($fields_map);

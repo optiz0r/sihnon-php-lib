@@ -1,6 +1,6 @@
 <?php
 
-class SihnonFramework_Auth_Plugin_FlatFile
+class SihnonFramework_Auth_Plugin_Config
     extends    Sihnon_PluginBase
     implements Sihnon_Auth_IPlugin,
                Sihnon_Auth_IUpdateable,
@@ -10,6 +10,8 @@ class SihnonFramework_Auth_Plugin_FlatFile
     
     protected function __construct($config) {
         $this->config = $config;
+        
+        Sihnon_Auth_Plugin_Config_User::init($config);
     }
     
     /*
@@ -21,15 +23,17 @@ class SihnonFramework_Auth_Plugin_FlatFile
     }
     
     public function userExists($username) {
-        return Sihnon_Auth_Plugin_FlatFile_User::exists($username);
+        return Sihnon_Auth_Plugin_Config_User::exists($username);
     }
     
     public function listUsers() {
-        return Sihnon_Auth_Plugin_FlatFile_User::all();
+        return array(
+            Sihnon_Auth_Plugin_Config_User::loadAdmin(),
+        );
     }
     
     public function authenticate($username, $password) {
-        $user = Sihnon_Auth_Plugin_FlatFile_User::load($username);
+        $user = Sihnon_Auth_Plugin_Config_User::load($username);
     
         if ( ! $user->checkPassword($password)) {
             throw new Sihnon_Exception_IncorrectPassword();
@@ -39,7 +43,7 @@ class SihnonFramework_Auth_Plugin_FlatFile
     }
     
     public function authenticateSession($username) {
-        return Sihnon_Auth_Plugin_FlatFile_User::load($username);
+        return Sihnon_Auth_Plugin_Config_User::load($username);
     }
     
     /*
@@ -47,11 +51,11 @@ class SihnonFramework_Auth_Plugin_FlatFile
     */
     
     public function addUser($username, $password) {
-        return Sihnon_Auth_Plugin_FlatFile_User::add($username, $password);
+        throw new Sihnon_Exception_NotImplemented();
     }
     
     public function removeUser(Sihnon_Auth_IUser $user) {
-        $user->delete();
+        throw new Sihnon_Exception_NotImplemented();
     }
     
     public function changePassword(Sihnon_Auth_IUser $user, $new_password) {
@@ -63,6 +67,10 @@ class SihnonFramework_Auth_Plugin_FlatFile
     */
     
     public function isAdministrator(Sihnon_Auth_IUser $user) {
+        return $user->isAdministrator();
+    }
+    
+    public function hasPermission(Sihnon_Auth_IUser $user, $permission) {
         return $user->isAdministrator();
     }
 

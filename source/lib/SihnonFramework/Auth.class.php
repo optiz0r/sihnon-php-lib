@@ -80,16 +80,28 @@ class SihnonFramework_Auth {
      */
     
     public function addUser($username, $password) {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_IUpdateable')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
         return $this->backend->addUser($username, $password);
     }
     
     public function removeUser() {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_IUpdateable')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
         $this->backend->removeUser($this->user);
         $this->user = null;
         $this->authenticated = false;
     }
     
     public function changePassword($new_password) {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_IUpdateable')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
         $this->backend->changePassword($this->user, $new_password);
     }
     
@@ -102,6 +114,10 @@ class SihnonFramework_Auth {
             return false;
         }
         
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_IPermissionable')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
         return $this->backend->isAdministrator($this->user);
     }
     
@@ -112,6 +128,10 @@ class SihnonFramework_Auth {
     public function hasPermission($permission) {
         if ( ! $this->user) {
             return false;
+        }
+        
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_IFinelyPermissionable')) {
+            throw new SihnonFramework_Exception_NotImplemented();
         }
         
         return $this->backend->hasPermission($this->user, $permission);
