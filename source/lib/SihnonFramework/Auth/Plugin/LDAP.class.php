@@ -46,7 +46,7 @@ class SihnonFramework_Auth_Plugin_LDAP
      * IPlugin methods
     */
     
-    public static function create(Sihnon_Config $config) {
+    public static function create(SihnonFramework_Config $config) {
         return new self($config);
     }
     
