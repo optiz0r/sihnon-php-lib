@@ -13,7 +13,7 @@ abstract class SihnonFramework_DatabaseObject {
             if (property_exists(get_called_class(), '_db_' . $property)) {
                 $this->{'_db_' . $property} = $value;
             } else {
-                throw new Sihnon_Exception_InvalidProperty($property);
+                /*throw new Sihnon_Exception_InvalidProperty($property);*/
             }
         }
     }
