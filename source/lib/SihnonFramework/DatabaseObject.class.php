@@ -47,18 +47,41 @@ abstract class SihnonFramework_DatabaseObject {
     /**
      * Load a DatabaseObject given a field name and value
      * 
-     * @param string $name Name of the field to match on
-     * @param mixed $value Value of the field to match on
+     * @param string $fields Name of the field(s) to match on
+     * @param mixed $values Value of the field(s) to match on
      */
-    public static function from($field, $value) {
+    public static function from($fields, $values) {
         $database = SihnonFramework_Main::instance()->database();
         
-        $object = self::fromDatabaseRow(
-            $database->selectOne("SELECT * FROM `".static::table()."` WHERE `{$field}`=:{$field}", array(
-                    array('name' => $field, 'value' => $value, 'type' => PDO::PARAM_STR)
-                )
-            )
-        );
+        if ( ! is_array($fields)) {
+            $fields = array($fields);
+        } 
+        if ( ! is_array($values)) {
+            $values = array($values);
+        }
+        
+        $field_count = count($fields);
+        if ($field_count == 0 || $field_count != count($values)) {
+            throw new SihnonFramework_Exception_InvalidConditions();
+        }
+        
+        $conditions = implode('AND ', array_map(
+            function($f) {
+                return "`{$f}`=:{$f} ";
+            },
+            $fields
+        ));
+
+        $params = array();
+        for ($i = 0; $i < $field_count; ++$i) {
+            $params[] = array(
+                'name' => $fields[$i],
+                'value' => $values[$i],
+                'type' => PDO::PARAM_STR
+            );
+        }
+        
+        $object = self::fromDatabaseRow($database->selectOne("SELECT * FROM `".static::table()."` WHERE {$conditions}", $params));
         
         return $object;        
     }
