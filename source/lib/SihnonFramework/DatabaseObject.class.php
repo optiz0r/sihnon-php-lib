@@ -32,16 +32,7 @@ abstract class SihnonFramework_DatabaseObject {
      * @return SihnonFramework_DatabaseObject
      */
     public static function fromId($id) {
-        $database = SihnonFramework_Main::instance()->database();
-        
-        $object = self::fromDatabaseRow(
-            $database->selectOne('SELECT * FROM `'.static::table().'` WHERE id=:id', array(
-                    array('name' => 'id', 'value' => $id, 'type' => PDO::PARAM_INT)
-                )
-            )
-        );
-    
-        return $object;
+        return static::from('id', $id);
     }
     
     /**
@@ -130,19 +121,43 @@ abstract class SihnonFramework_DatabaseObject {
         return $objects;
     }
     
-    public static function allFor($field, $value, $view = null, $additional_conditions = null, $additional_params = null) {
-        $conditions = "`{$field}`=:{$field} ";
+    public static function allFor($fields, $values, $view = null, $additional_conditions = null, $additional_params = null) {
+        if ( ! is_array($fields)) {
+            $fields = array($fields);
+        } 
+        if ( ! is_array($values)) {
+            $values = array($values);
+        }
+        
+        $field_count = count($fields);
+        if ($field_count == 0 || $field_count != count($values)) {
+            throw new SihnonFramework_Exception_InvalidConditions();
+        }
+        
+        $conditions = implode('AND ', array_map(
+            function($f) {
+                return "`{$f}`=:{$f} ";
+            },
+            $fields
+        ));
+
         if ($additional_conditions) {
             $conditions .= "AND ({$additional_conditions}) ";
         }
         
-        $params = array(
-            array('name' => $field, 'value' => $value, 'type' => PDO::PARAM_STR),
-        );
+        $params = array();
+        for ($i = 0; $i < $field_count; ++$i) {
+            $params[] = array(
+                'name' => $fields[$i],
+                'value' => $values[$i],
+                'type' => PDO::PARAM_STR
+            );
+        }
+        
         if ($additional_params) {
             $params = array_merge($params, $additional_params);
         }
-         
+
         return static::all($view, $conditions, $params);
     }
     
