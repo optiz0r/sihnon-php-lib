@@ -41,6 +41,9 @@ class SihnonFramework_Auth_Plugin_Database
             throw new Sihnon_Exception_IncorrectPassword();
         }
         
+        $user->last_login = time();
+        $user->save();
+        
         return $user;
     }
     

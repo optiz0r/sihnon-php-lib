@@ -23,6 +23,7 @@ class SihnonFramework_Exception_NoDatabaseConnection   extends SihnonFramework_E
 class SihnonFramework_Exception_DatabaseQueryFailed    extends SihnonFramework_Exception_DatabaseException {};
 class SihnonFramework_Exception_ResultCountMismatch    extends SihnonFramework_Exception_DatabaseException {};
 class SihnonFramework_Exception_InvalidProperty        extends SihnonFramework_Exception_DatabaseException {};
+class SihnonFramework_Exception_InvalidConditions      extends SihnonFramework_Exception_DatabaseException {};
 
 class SihnonFramework_Exception_ConfigException        extends SihnonFramework_Exception {};
 class SihnonFramework_Exception_UnknownSetting         extends SihnonFramework_Exception_ConfigException {};
