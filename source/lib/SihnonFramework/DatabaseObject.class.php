@@ -1,6 +1,9 @@
 <?php
 
 abstract class SihnonFramework_DatabaseObject {
+
+    const ORDER_ASC = 'ASC';
+    const ORDER_DESC = 'DESC';
     
     protected static $table;
     
@@ -82,7 +85,7 @@ abstract class SihnonFramework_DatabaseObject {
      * 
 	 * @return SihnonFramework_DatabaseObject
      */
-    public static function all($view = null, $additional_conditions = null, $additional_params = null) {
+    public static function all($view = null, $additional_conditions = null, $additional_params = null, $order_by = 'id', $order_dir = self::ORDER_DESC) {
         $database = SihnonFramework_Main::instance()->database();
         
         if ($view === null) {
@@ -113,7 +116,7 @@ abstract class SihnonFramework_DatabaseObject {
         }
         
         $objects = array();
-        $sql = "SELECT {$field_list} FROM `{$view}` WHERE `id` > 0 {$conditions} ORDER BY `id` DESC";
+        $sql = "SELECT {$field_list} FROM `{$view}` WHERE `id` > 0 {$conditions} ORDER BY `{$order_by}` {$order_dir}";
         foreach ($database->selectList($sql, $params) as $row) {
             $objects[] = static::fromDatabaseRow($row);
         }
@@ -121,7 +124,7 @@ abstract class SihnonFramework_DatabaseObject {
         return $objects;
     }
     
-    public static function allFor($fields, $values, $view = null, $additional_conditions = null, $additional_params = null) {
+    public static function allFor($fields, $values, $view = null, $additional_conditions = null, $additional_params = null, $order_by = 'id', $order_dir = self::ORDER_DESC) {
         if ( ! is_array($fields)) {
             $fields = array($fields);
         } 
@@ -158,7 +161,7 @@ abstract class SihnonFramework_DatabaseObject {
             $params = array_merge($params, $additional_params);
         }
 
-        return static::all($view, $conditions, $params);
+        return static::all($view, $conditions, $params, $order_by, $order_dir);
     }
     
     public static function exists($field, $value, $view = null) {
