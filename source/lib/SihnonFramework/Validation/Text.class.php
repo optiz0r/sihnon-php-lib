@@ -39,6 +39,12 @@ class SihnonFramework_Validation_Text extends SihnonFramework_Validation {
         }
     }
     
+    public static function email($input) {
+        if (filter_var($input, FILTER_VALIDATE_EMAIL) === false) {
+            throw new SihnonFramework_Exception_InvalidContent();
+        }
+    }
+    
     public static function pattern($inputs, $pattern) {
         if ( ! is_array($inputs)) {
             $inputs = array($inputs);
