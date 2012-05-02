@@ -4,7 +4,8 @@ class SihnonFramework_Auth_Plugin_Database
     extends    Sihnon_PluginBase 
     implements Sihnon_Auth_IPlugin, 
                Sihnon_Auth_IUpdateable, 
-               Sihnon_Auth_IFinelyPermissionable {
+               Sihnon_Auth_IFinelyPermissionable, 
+               Sihnon_Auth_IDetails {
 
     protected $config;
     protected $database;
@@ -41,7 +42,7 @@ class SihnonFramework_Auth_Plugin_Database
             throw new Sihnon_Exception_IncorrectPassword();
         }
         
-        $user->last_login = time();
+        $user->setLastLoginTime(time());
         $user->save();
         
         return $user;
@@ -85,6 +86,72 @@ class SihnonFramework_Auth_Plugin_Database
         return $user->hasPermission($permission);
     }
     
+    /*
+     * IDetails methods
+     */
+     
+    /**
+     * Gets the user's email address
+     *
+     * @param $user Sihnon_Auth_IUser User
+     * @return string Email address
+     */
+    public function emailAddress(Sihnon_Auth_IUser $user) {
+        return $user->emailAddress();
+    }
+    
+    /**
+     * Sets the user's email address
+     * 
+     * Requires the backend to implement IUpdateable
+     * 
+     * @param $user Sihnon_Auth_IUser User
+     * @param $emailAddress string New email address
+     */
+    public function setEmailAddress(Sihnon_Auth_IUser $user, $emailAddress) {
+        return $user->setEmailAddress($emailAddress);
+    }
+    
+    /**
+     * Gets the user's real name
+     * 
+     * @param $user Sihnon_Auth_IUser User
+     * @return string Real name
+     */
+    public function realName(Sihnon_Auth_IUser $user) {
+        return $user->realName();
+    }
+    
+    /**
+     * Sets the user's real name
+     *
+     * @param $user Sihnon_Auth_IUser User
+     * @param $realName string New real name
+     */
+    public function setRealName(Sihnon_Auth_IUser $user, $realName) {
+        return $user->setRealName($realName);
+    }
+    
+    /**
+     * Gets the user's last login time
+     *
+     * @param $user Sihnon_Auth_IUser User
+     * @return int Unix timestamp of the last login time
+     */
+    public function lastLoginTime(Sihnon_Auth_IUser $user) {
+        return $user->lastLoginTime();
+    }
+    
+    /**
+     * Sets the user's last login time
+     *
+     * @param $user Sihnon_Auth_IUser User
+     8 @param $time int Last login time
+     */
+    public function setLastLoginTime(Sihnon_Auth_IUser $user, $time) {
+        return $user->setLastLoginTime($time);
+    }
+
 }
 
 ?>
