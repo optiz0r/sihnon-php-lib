@@ -49,7 +49,21 @@ interface SihnonFramework_Auth_User_IDetails {
      *
      8 @param $time int Last login time
      */
-    public function setLastLoginTime($time);
+    public function setLastLoginTime($time);    
+    
+    /**
+     * Gets the user's last password change time
+     *
+     * @return int Unix timestamp of the last password change
+     */
+    public function lastPasswordChangeTime();
+    
+    /**
+     * Sets the user's last password change time
+     *
+     8 @param $time int Last password change time
+     */
+    public function setLastPasswordChangeTime($time);
     
 }
 

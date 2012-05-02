@@ -54,7 +54,7 @@ class SihnonFramework_Auth {
     
     public function restoreSession() {
         if ($this->session->exists('user.id')) {
-            $this->user = $this->backend->authenticateSession($this->session->get('user.id'));
+            $this->user = $this->backend->user($this->session->get('user.id'));
             $this->authenticated = true;
         }
     }
@@ -78,6 +78,10 @@ class SihnonFramework_Auth {
         
         $this->session->securityLeveLChanged();
         $this->saveSession();
+    }
+    
+    public function user($username) {
+        return $this->backend->user($username);
     }
     
     public function deauthenticate() {

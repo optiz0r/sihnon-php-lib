@@ -48,7 +48,7 @@ class SihnonFramework_Auth_Plugin_Database
         return $user;
     }
     
-    public function authenticateSession($username) {
+    public function user($username) {
         return Sihnon_Auth_Plugin_Database_User::from('username', $username);
     }
     
@@ -152,6 +152,26 @@ class SihnonFramework_Auth_Plugin_Database
         return $user->setLastLoginTime($time);
     }
 
+    /**
+     * Gets the user's last password change time
+     *
+     * @param $user Sihnon_Auth_IUser User
+     * @return int Unix timestamp of the last password change
+     */
+    public function lastPasswordChangeTime(Sihnon_Auth_IUser $user) {
+        return $user->lastPasswordChangeTime();
+    }
+    
+    /**
+     * Sets the user's last password change time
+     *
+     * @param $user Sihnon_Auth_IUser User
+     8 @param $time int Last password change time
+     */
+    public function setLastPasswordChangeTime(Sihnon_Auth_IUser $user, $time) {
+        return $user->setLastPasswordChangeTime($time);
+    }
+    
 }
 
 ?>

@@ -28,7 +28,7 @@ class SihnonFramework_Auth_Plugin_None
         throw new SihnonFramework_Exception_NotImplemented();
     }
     
-    public function authenticateSession($username) {
+    public function user($username) {
         throw new SihnonFramework_Exception_NotImplemented();
     }
     

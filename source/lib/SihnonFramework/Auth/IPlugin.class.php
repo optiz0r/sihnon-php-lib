@@ -43,12 +43,12 @@ interface SihnonFramework_Auth_IPlugin extends Sihnon_IPlugin {
     /**
      * Retrieves a user without also verifying a password.
      *
-     * This is used to get the details for a logged-in user where a valid session is already open.
+     * This is used to get the details of a user without logging in as that user.
      *
      * @param string $username Unique login name of the user.
-     * @param Sihnon_Auth_IUser User object for the previously-authenticated account
+     * @param Sihnon_Auth_IUser User object
      */
-    public function authenticateSession($username);
+    public function user($username);
     
 }
 

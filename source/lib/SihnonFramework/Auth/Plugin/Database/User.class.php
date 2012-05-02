@@ -47,6 +47,7 @@ class SihnonFramework_Auth_Plugin_Database_User
     
     public function changePassword($new_password) {
         $this->password = sha1($new_password);
+        $this->last_password_change = time();
         $this->save();
     }
     
@@ -131,6 +132,24 @@ class SihnonFramework_Auth_Plugin_Database_User
      */
     public function setLastLoginTime($time) {
         $this->last_login = $time;
+    }
+    
+    /**
+     * Gets the user's last password change time
+     *
+     * @return int Unix timestamp of the last password change
+     */
+    public function lastPasswordChangeTime() {
+        return $this->last_password_change;
+    }
+    
+    /**
+     * Sets the user's last password change time
+     *
+     8 @param $time int Last password change time
+     */
+    public function setLastPasswordChangeTime($time) {
+        $this->last_password_change =  $time;
     }
     
 }

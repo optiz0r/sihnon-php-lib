@@ -38,7 +38,7 @@ class SihnonFramework_Auth_Plugin_FlatFile
         return $user;
     }
     
-    public function authenticateSession($username) {
+    public function user($username) {
         return Sihnon_Auth_Plugin_FlatFile_User::load($username);
     }
     

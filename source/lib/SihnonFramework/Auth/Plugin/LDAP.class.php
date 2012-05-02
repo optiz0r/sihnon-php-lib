@@ -68,7 +68,7 @@ class SihnonFramework_Auth_Plugin_LDAP
         return $user;
     }
     
-    public function authenticateSession($username) {
+    public function user($username) {
         return Sihnon_Auth_Plugin_LDAP_User::load($username);
     }
     
