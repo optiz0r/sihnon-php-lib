@@ -22,6 +22,18 @@ class SihnonFramework_Auth {
         $this->restoreSession();
     }
     
+    public function checkFeatures($interfaces) {
+        if ( ! is_array($interfaces)) {
+            $interfaces = array($interface);
+        }
+        
+        foreach ($interfaces as $interface) {
+            if ( ! is_subclass_of($this->backend, $interface)) {
+                throw new SihnonFramework_Exception_UnsupportedFeature($interface);
+            }
+        }
+    }
+    
     public function isAuthenticated() {
         return $this->authenticated;
     }
@@ -137,6 +149,109 @@ class SihnonFramework_Auth {
         return $this->backend->hasPermission($this->user, $permission);
     }
     
+    /*
+     * IDetails methods
+     */
+     
+    public function emailAddress() {
+        if ( ! $this->user) {
+            return false;
+        }
+        
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_User_IDetails')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
+        return $this->backend->emailAddress($this->user);
+    }
+    
+    public function setEmailAddress($emailAddress) {
+        if ( ! $this->user) {
+            return false;
+        }
+        
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_User_IDetails')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
+        return $this->backend->setEmailAddress($this->user, $emailAddress);
+    }
+    
+    public function realName() {
+        if ( ! $this->user) {
+            return false;
+        }
+        
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_User_IDetails')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
+        return $this->backend->realName($this->user);
+    }
+    
+    public function setRealName($realName) {
+        if ( ! $this->user) {
+            return false;
+        }
+        
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_User_IDetails')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
+        return $this->backend->setRealName($this->user, $realName);    
+    }
+    
+    /*
+     * ICustomAttributes methods
+     */
+    
+    public function availableCustomAttributes() {
+        if ( ! $this->user) {
+            return false;
+        }
+        
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_User_ICustomAttribute')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
+        return $this->backend->availableCustomAttributes($this->user);
+    }
+    
+    public function allCustomAttributes() {
+        if ( ! $this->user) {
+            return false;
+        }
+        
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_User_ICustomAttribute')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
+        return $this->backend->allCustomAttributes($this->user);
+    }
+    
+    public function customAttribute($name) {
+        if ( ! $this->user) {
+            return false;
+        }
+        
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_User_ICustomAttribute')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
+        return $this->backend->customAttribute($this->user, $name);
+    }
+    
+    public function setCustomAttribute($name, $value) {
+        if ( ! $this->user) {
+            return false;
+        }
+        
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_User_ICustomAttribute')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
+        return $this->backend->setCustomAttribute($this->user, $name, $value);
+    }
 }
 
 ?>

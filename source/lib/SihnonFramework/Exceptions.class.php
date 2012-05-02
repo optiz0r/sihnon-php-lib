@@ -6,6 +6,7 @@ class SihnonFramework_Exception_NotInitialised         extends SihnonFramework_E
 class SihnonFramework_Exception_AlreadyInitialisted    extends SihnonFramework_Exception {};
 
 class SihnonFramework_Exception_NotImplemented         extends SihnonFramework_Exception {};
+class SihnonFramework_Exception_UnsupportedFeature     extends SihnonFramework_Exception {};
 class SihnonFramework_Exception_MissingDefinition      extends SihnonFramework_Exception {};
 class SihnonFramework_Exception_ClassNotFound          extends SihnonFramework_Exception {};
 

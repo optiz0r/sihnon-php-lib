@@ -1,6 +1,10 @@
 <?php
 
-class SihnonFramework_Auth_Plugin_Database_User extends Sihnon_DatabaseObject implements Sihnon_Auth_IUser {
+class SihnonFramework_Auth_Plugin_Database_User
+    extends    Sihnon_DatabaseObject
+    implements Sihnon_Auth_IUser,
+               Sihnon_Auth_User_IDetails,
+               Sihnon_Auth_User_IUpdateable {
     
     protected static $table = 'user';
 
@@ -27,6 +31,10 @@ class SihnonFramework_Auth_Plugin_Database_User extends Sihnon_DatabaseObject im
         $user->create();
         
         return $user;
+    }
+    
+    public function id() {
+        return $this->id;
     }
     
     public function username() {
@@ -67,6 +75,62 @@ class SihnonFramework_Auth_Plugin_Database_User extends Sihnon_DatabaseObject im
         }
         
         return false;
+    }
+    
+    /**
+     * Gets the user's email address
+     *
+     * @return string Email address
+     */
+    public function emailAddress() {
+        return $this->email;
+    }
+    
+    /**
+     * Sets the user's email address
+     * 
+     * Requires the backend to implement IUpdateable
+     * 
+     * @param $emailAddress string New email address
+     */
+    public function setEmailAddress($emailAddress) {
+        $this->email = $emailAddress;
+    }
+    
+    /**
+     * Gets the user's real name
+     * 
+     * @return string Real name
+     */
+    public function realName() {
+        return $this->fullname;
+    }
+    
+    /**
+     * Sets the user's real name
+     *
+     * @param $realName string New real name
+     */
+    public function setRealName($realName) {
+        $this->fullname = $realName;
+    }
+    
+    /**
+     * Gets the user's last login time
+     *
+     * @return int Unix timestamp of the last login time
+     */
+    public function lastLoginTime() {
+        return $this->last_login;
+    }
+    
+    /**
+     * Sets the user's last login time
+     *
+     8 @param $time int Last login time
+     */
+    public function setLastLoginTime($time) {
+        $this->last_login = $time;
     }
     
 }
