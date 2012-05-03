@@ -45,6 +45,8 @@ class SihnonFramework_Exception_InvalidLog             extends SihnonFramework_E
 class SihnonFramework_Exception_AuthException          extends SihnonFramework_Exception {};
 class SihnonFramework_Exception_UnknownUser            extends SihnonFramework_Exception_AuthException {};
 class SihnonFramework_Exception_IncorrectPassword      extends SihnonFramework_Exception_AuthException {};
+class SihnonFramework_Exception_PasswordsDontMatch     extends SihnonFramework_Exception_AuthException {};
+class SihnonFramework_Exception_AlreadyInUse           extends SihnonFramework_Exception_AuthException {};
 
 class SihnonFramework_Exception_ValidationException    extends SihnonFramework_Exception {};
 class SihnonFramework_Exception_InvalidContent         extends SihnonFramework_Exception_ValidationException {};

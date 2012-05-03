@@ -5,7 +5,9 @@ class SihnonFramework_Auth_Plugin_Database
     implements Sihnon_Auth_IPlugin, 
                Sihnon_Auth_IUpdateable, 
                Sihnon_Auth_IFinelyPermissionable, 
-               Sihnon_Auth_IDetails {
+               Sihnon_Auth_IDetails,
+               Sihnon_Auth_IGroupable,
+               Sihnon_Auth_IUpdateableGroups {
 
     protected $config;
     protected $database;
@@ -171,7 +173,82 @@ class SihnonFramework_Auth_Plugin_Database
     public function setLastPasswordChangeTime(Sihnon_Auth_IUser $user, $time) {
         return $user->setLastPasswordChangeTime($time);
     }
+
+    /*
+     * IGroupable methods
+     */
     
+    /**
+     * Checks to see whether a given username exists within the backend
+     *
+     * @param string $groupname Unique login name for the group to be checked.
+     * @return bool Returns true if the group is known to the backend, false otherwise.
+     */
+    public function groupExists($groupname) {
+        return Sihnon_Auth_Plugin_Database_Group::exists('name', $groupname);
+    }
+    
+    /**
+     * Returns a list of all users known to the backend.
+     *
+     * @return array(Sihnon_Auth_IUser)
+     */
+    public function listGroups() {
+        return Sihnon_Auth_Plugin_Database_Group::all();
+    }
+    
+    /**
+     * Retrieves a group
+     *
+     * @param string $groupname Unique name for the group
+     * @param Sihnon_Auth_IGroup Group object
+     */
+    public function group($groupname) {
+        return Sihnon_Auth_Plugin_Database_Group::from('name', $groupname);
+    }
+    
+    /*
+     * IUpdateableGroups methods
+     */
+     
+        /**
+     * Creaates a new entry for this group in the backend
+     * 
+     * @param string $groupname Unique name for the group
+     * @param string $description Text description of the pupose for the group
+     */
+    public function addGroup($groupname, $description) {
+        return Sihnon_Auth_Plugin_Database_Group::add($groupname, $description);
+    }
+    
+    /**
+     * Removes the entry for this group from the backend
+     *
+     * @param Sihnon_Auth_IGroup $group Group to be removed.
+     */
+    public function removeGroup(Sihnon_Auth_IGroup $group) {
+        $group->delete();
+    }
+        
+    /**
+     * Add a user to this group in the backend
+     *
+     * @param Sihnon_Auth_IGroup $group Group to be modified
+     * @param Sihnon_Auth_IUser $user User to be added to the group
+     */
+    public function addUserToGroup(Sihnon_Auth_IGroup $group, Sihnon_Auth_IUser $user) {
+        return $group->addUser($user);
+    }
+    
+    /**
+     * Removes a user from this group in the backend
+     *
+     * @param Sihnon_Auth_IGroup $group Group to be modified
+     * @param Sihnon_Auth_IUser $user User to be removed from the group
+     */
+    public function removeUserFromGroup(Sihnon_Auth_IGroup $group, Sihnon_Auth_IUser $user) {
+        return $group->removeUser($user);
+    }
 }
 
 ?>

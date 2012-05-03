@@ -4,7 +4,8 @@ class SihnonFramework_Auth_Plugin_Database_User
     extends    Sihnon_DatabaseObject
     implements Sihnon_Auth_IUser,
                Sihnon_Auth_User_IDetails,
-               Sihnon_Auth_User_IUpdateable {
+               Sihnon_Auth_User_IUpdateable,
+               Sihnon_Auth_User_IGroupable {
     
     protected static $table = 'user';
 
@@ -50,15 +51,7 @@ class SihnonFramework_Auth_Plugin_Database_User
         $this->last_password_change = time();
         $this->save();
     }
-    
-    public function groups($ignore_cache = false) {
-        if ($this->groups === null || $ignore_cache) {
-            $this->groups = Sihnon_Auth_Plugin_Database_Group::allFor('user', $this->id, 'groups_by_user');
-        }
         
-        return $this->groups;
-    }
-    
     public function permissions($ignore_cache = false) {
         if ($this->permissions === null || $ignore_cache) {
             $this->permissions = Sihnon_Auth_Plugin_Database_Permission::allFor('user', $this->id, 'permissions_by_user');
@@ -151,6 +144,33 @@ class SihnonFramework_Auth_Plugin_Database_User
     public function setLastPasswordChangeTime($time) {
         $this->last_password_change =  $time;
     }
+    
+    /*
+     * IGroupable methods
+     */
+     
+    /**
+     * Returns all users for a given group
+     *
+     * @return array(Sihnon_Auth_IUser)
+     */
+    public function allForGroup(Sihnon_Auth_IGroup $group) {
+        return self::allFor('group', $group->id(),  'users_by_group');
+    }
+    
+    /**
+     * Returns all groups for this user
+     *
+     * @return array(Sihnon_Auth_IGroup)
+     */
+    public function groups($ignore_cache = false) {
+        if ($this->groups === null || $ignore_cache) {
+            $this->groups = Sihnon_Auth_Plugin_Database_Group::allFor('user', $this->id, 'groups_by_user');
+        }
+        
+        return $this->groups;
+    }
+
     
 }
 

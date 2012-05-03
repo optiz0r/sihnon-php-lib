@@ -68,6 +68,16 @@ class SihnonFramework_Auth {
      * IPlugin methods
      */
     
+    /**
+     * Checks to see whether a given username exists within the backend
+     *
+     * @param string $username Unique login name for the user to be checked.
+     * @return bool Returns true if the user is known to the backend, false otherwise.
+     */
+    public function userExists($username) {
+        return $this->backend->userExists($username);
+    }
+
     public function listUsers() {
         return $this->backend->listUsers();
     }
@@ -162,7 +172,7 @@ class SihnonFramework_Auth {
             return false;
         }
         
-        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_User_IDetails')) {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_IDetails')) {
             throw new SihnonFramework_Exception_NotImplemented();
         }
         
@@ -174,7 +184,7 @@ class SihnonFramework_Auth {
             return false;
         }
         
-        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_User_IDetails')) {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_IDetails')) {
             throw new SihnonFramework_Exception_NotImplemented();
         }
         
@@ -186,7 +196,7 @@ class SihnonFramework_Auth {
             return false;
         }
         
-        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_User_IDetails')) {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_IDetails')) {
             throw new SihnonFramework_Exception_NotImplemented();
         }
         
@@ -198,7 +208,7 @@ class SihnonFramework_Auth {
             return false;
         }
         
-        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_User_IDetails')) {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_IDetails')) {
             throw new SihnonFramework_Exception_NotImplemented();
         }
         
@@ -214,7 +224,7 @@ class SihnonFramework_Auth {
             return false;
         }
         
-        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_User_ICustomAttribute')) {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_ICustomAttribute')) {
             throw new SihnonFramework_Exception_NotImplemented();
         }
         
@@ -226,7 +236,7 @@ class SihnonFramework_Auth {
             return false;
         }
         
-        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_User_ICustomAttribute')) {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_ICustomAttribute')) {
             throw new SihnonFramework_Exception_NotImplemented();
         }
         
@@ -238,7 +248,7 @@ class SihnonFramework_Auth {
             return false;
         }
         
-        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_User_ICustomAttribute')) {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_ICustomAttribute')) {
             throw new SihnonFramework_Exception_NotImplemented();
         }
         
@@ -250,11 +260,56 @@ class SihnonFramework_Auth {
             return false;
         }
         
-        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_User_ICustomAttribute')) {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_ICustomAttribute')) {
             throw new SihnonFramework_Exception_NotImplemented();
         }
         
         return $this->backend->setCustomAttribute($this->user, $name, $value);
+    }
+    
+    /*
+     * IGroupable methods
+     */
+        
+    /**
+     * Checks to see whether a given username exists within the backend
+     *
+     * @param string $groupname Unique login name for the group to be checked.
+     * @return bool Returns true if the group is known to the backend, false otherwise.
+     */
+    public function groupExists($groupname) {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_IGroupable')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
+        return $this->backend->groupExists($groupname);
+    }
+    
+    /**
+     * Returns a list of all users known to the backend.
+     *
+     * @return array(Sihnon_Auth_IUser)
+     */
+    public function listGroups() {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_IGroupable')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
+        return $this->backend->listGroups();
+    }
+    
+    /**
+     * Retrieves a group
+     *
+     * @param string $groupname Unique name for the group
+     * @param Sihnon_Auth_IGroup Group object
+     */
+    public function group($groupname)  {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_IGroupable')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
+        return $this->backend->group($groupname);
     }
 }
 
