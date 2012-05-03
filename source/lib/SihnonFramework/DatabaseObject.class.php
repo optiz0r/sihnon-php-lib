@@ -167,10 +167,12 @@ abstract class SihnonFramework_DatabaseObject {
     public static function exists($field, $value, $view = null) {
         $database = Sihnon_Main::instance()->database();
         
-        return $database->selectOne('SELECT COUNT(*) FROM `'.static::table().'` "WHERE `{$field}`=:{$field} LIMIT 1', array(
+        $result = $database->selectOne('SELECT COUNT(*) AS `count` FROM `'.static::table()."` WHERE `{$field}`=:{$field} LIMIT 1", array(
                 array('name' => $field, 'value' => $value, 'type' => PDO::PARAM_STR),
             )
         );
+        
+        return $result['count'];
     }
     
     protected function create() {
