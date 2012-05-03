@@ -22,7 +22,7 @@ class SihnonFramework_DateTime {
     public static function fuzzyTime($time) {
         if ( ! preg_match('/^\d+$/', $time)) {
             if (($time = strtotime($time)) == false) {
-                return 'an unknown time';
+                return 'never';
             }
         }
         
