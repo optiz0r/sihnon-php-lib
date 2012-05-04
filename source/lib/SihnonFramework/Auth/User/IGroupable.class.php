@@ -19,6 +19,13 @@ interface SihnonFramework_Auth_User_IGroupable {
      */
     public function groups();
     
+    /**
+     * Returns the list of groups that this user is not a member of
+     *
+     * 'return array(Sihnon_Auth_IGroup)
+     */
+    public function unusedGroups();
+    
 }
 
 ?>

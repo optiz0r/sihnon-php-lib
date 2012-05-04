@@ -170,7 +170,15 @@ class SihnonFramework_Auth_Plugin_Database_User
         
         return $this->groups;
     }
-
+    
+    /**
+     * Returns the list of groups that this user is not a member of
+     *
+     * 'return array(Sihnon_Auth_IGroup)
+     */
+    public function unusedGroups() {
+        return Sihnon_Auth_Plugin_Database_Group::unusedByUser($this);
+    }
     
 }
 

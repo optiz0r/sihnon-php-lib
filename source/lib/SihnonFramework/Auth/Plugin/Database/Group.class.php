@@ -13,6 +13,17 @@ class SihnonFramework_Auth_Plugin_Database_Group
     protected $_db_description;
     
     protected $users = null;
+    protected $permissions = null;
+    
+    /**
+     * Returns the list of groups the given user is not a member of
+     *
+     * @param Sihnon_Auth_Plugin_Database_User $user User to retrieve the list of unused groups for
+     * @return array(Sihnon_Auth_IGroup)
+     */
+    public static function unusedByUser(Sihnon_Auth_IUser $user) {
+        return self::allFor('user', $user->id, 'group_unmatchedusers', null, null, 'name', self::ORDER_ASC);
+    }
     
     /*
      * IGroup methods
@@ -132,7 +143,14 @@ class SihnonFramework_Auth_Plugin_Database_Group
      * @param Sihnon_Auth_IUser $user User to be removed from the group
      */
     public function removeUser(Sihnon_Auth_IUser $user) {
-        throw new SihnonFramework_Exception_NotImplemented();
+        $ug = Sihnon_Auth_Plugin_Database_UserGroup::fromUserGroup($user, $this);
+        
+        // Prevent deletion of the default user from the default administrators group
+        if ($user->id == 1 && $group->id == 1) {
+            throw new SihnonFramework_Exception_DeleteNotPermitted();
+        }
+        
+        $ug->delete();
     }
     
     /**
@@ -141,9 +159,31 @@ class SihnonFramework_Auth_Plugin_Database_Group
      * @return array(Sihnon_Auth_IPermission)
      */
     public function permissions() {
-        return Sihnon_Auth_Plugin_Database_Permission::allForGroup($this);
+        if ($this->permissions === null) {
+            $this->permissions = Sihnon_Auth_Plugin_Database_Permission::allForGroup($this);
+        }
+        
+        return $this->permissions;
     }
 
+    /**
+     * Checks if the group holds tie given permission
+     *
+     * @param Sihnon_Auth_IPermission $permission Permission to be checked
+     * @return bool Returns True if this group holds the given permission, false otherwise.
+     */
+    public function hasPermission(Sihnon_Auth_IPermission $permission) {
+        $permissions = $this->permissions();
+        
+        foreach ($permissions as $permission_) {
+            if ($permission_->id == $permission->id) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     /**
      * Returns the list of available permissions not already associated with this group
      *
@@ -159,7 +199,9 @@ class SihnonFramework_Auth_Plugin_Database_Group
      * @param Sihnon_Auth_IPermission
      */
     public function addPermission(Sihnon_Auth_IPermission $permission) {
-        $new_gp = Sihnon_Auth_Plugin_Database_GroupPermission::newFor($this, $permission);
+        if ( ! $this->hasPermission($permission)) {
+            $new_gp = Sihnon_Auth_Plugin_Database_GroupPermission::newFor($this, $permission);
+        }
     }
     
     /**
