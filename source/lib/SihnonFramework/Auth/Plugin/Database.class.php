@@ -84,8 +84,37 @@ class SihnonFramework_Auth_Plugin_Database
      * IFinelyPermissionable methods
      */
 
+    /**
+     * Checks if the user holds the given permission
+     *
+     * Used to provide RBAC to restrict access to certain features of an application.
+     * Permissions may be defined as class constants or as extensible items stored in the backend.
+     *
+     * @param Sihnon_Auth_IUser $user User to be checked
+     * @param int $permission Identified for the permission to be checked.
+     * @return bool Returns true if the user holds the permission, false otherwise.
+     */
     public function hasPermission(Sihnon_Auth_IUser $user, $permission) {
         return $user->hasPermission($permission);
+    }
+    
+    /**
+     * Returns a list of all permissions defined in the backend
+     *
+     * @return array(Sihnon_Auth_IPermission)
+     */
+    public function listPermissions() {
+        return Sihnon_Auth_Plugin_Database_Permission::all(null, null, null, 'name', Sihnon_Auth_Plugin_Database_Permission::ORDER_ASC);
+    }
+    
+        /**
+     * Returns a Permission object with the given ID
+     *
+     * @param mixed $id Unique identifier for the permission to retrieve
+     * @return Sihnon_Auth_IPermission
+     */
+    public function permission($id) {
+        return Sihnon_Auth_Plugin_Database_Permission::fromId($id);
     }
     
     /*
@@ -219,6 +248,18 @@ class SihnonFramework_Auth_Plugin_Database
      */
     public function addGroup($groupname, $description) {
         return Sihnon_Auth_Plugin_Database_Group::add($groupname, $description);
+    }
+    
+    /**
+     * Checks whether the given group may be removed by the user
+     *
+     * Some groups may be vital for system operation, such as an administrators group
+     * 
+     * @param Sihnon_Auth_IGroup $group Group to be tested for removability
+     * @return bool Returns True if the group may be removed, false otherwise.
+     */
+    public function removable(Sihnon_Auth_IGroup $group) {
+        return $group->removable();
     }
     
     /**

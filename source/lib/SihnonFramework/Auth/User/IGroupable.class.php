@@ -10,7 +10,7 @@ interface SihnonFramework_Auth_User_IGroupable {
      *
      * @return array(Sihnon_Auth_IUser)
      */
-    public function allForGroup(Sihnon_Auth_IGroup $group);
+    public static function allForGroup(Sihnon_Auth_IGroup $group);
     
     /**
      * Returns all groups for this user

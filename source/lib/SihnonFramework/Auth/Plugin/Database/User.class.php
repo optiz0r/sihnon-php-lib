@@ -154,7 +154,7 @@ class SihnonFramework_Auth_Plugin_Database_User
      *
      * @return array(Sihnon_Auth_IUser)
      */
-    public function allForGroup(Sihnon_Auth_IGroup $group) {
+    public static function allForGroup(Sihnon_Auth_IGroup $group) {
         return self::allFor('group', $group->id(),  'users_by_group');
     }
     

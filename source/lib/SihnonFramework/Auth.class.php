@@ -163,6 +163,33 @@ class SihnonFramework_Auth {
         return $this->backend->hasPermission($this->user, $permission);
     }
     
+    /**
+     * Returns a list of all permissions defined in the backend
+     *
+     * @return array(Sihnon_Auth_IPermission)
+     */
+    public function listPermissions() {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_IFinelyPermissionable')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
+        return $this->backend->listPermissions();
+    }
+    
+    /**
+     * Returns a Permission object with the given ID
+     *
+     * @param mixed $id Unique identifier for the permission to retrieve
+     * @return Sihnon_Auth_IPermission
+     */
+    public function permission($id) {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_IFinelyPermissionable')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
+        return $this->backend->permission($id);
+    }
+    
     /*
      * IDetails methods
      */
@@ -310,6 +337,65 @@ class SihnonFramework_Auth {
         }
         
         return $this->backend->group($groupname);
+    }
+    
+    /*
+     * IUpdateableGroups
+     */
+     
+        /**
+     * Creaates a new entry for this group in the backend
+     * 
+     * @param string $groupname Unique name for the group
+     * @param string $description Text description of the pupose for the group
+     */
+    public function addGroup($groupname, $description) {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_IUpdateableGroups')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
+        return $this->backend->addGroup($groupname, $description);
+    }
+    
+    /**
+     * Removes the entry for this group from the backend
+     *
+     * @param Sihnon_Auth_IGroup $group Group to be removed.
+     */
+    public function removeGroup(Sihnon_Auth_IGroup $group) {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_IUpdateableGroups')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
+        return $this->backend->removeGroup($groupname);
+    }
+        
+    /**
+     * Add a user to this group in the backend
+     *
+     * @param Sihnon_Auth_IGroup $group Group to be modified
+     * @param Sihnon_Auth_IUser $user User to be added to the group
+     */
+    public function addUserToGroup(Sihnon_Auth_IGroup $group, Sihnon_Auth_IUser $user) {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_IUpdateableGroups')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
+        return $this->backend->addUserToGroup($group, $user);
+    }
+    
+    /**
+     * Removes a user from this group in the backend
+     *
+     * @param Sihnon_Auth_IGroup $group Group to be modified
+     * @param Sihnon_Auth_IUser $user User to be removed from the group
+     */
+    public function removeUserFromGroup(Sihnon_Auth_IGroup $group, Sihnon_Auth_IUser $user) {
+        if ( ! is_subclass_of($this->backend, 'SihnonFramework_Auth_IUpdateableGroups')) {
+            throw new SihnonFramework_Exception_NotImplemented();
+        }
+        
+        return $this->backend->removeUserFromGroup($group, $user);
     }
 }
 

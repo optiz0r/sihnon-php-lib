@@ -83,6 +83,15 @@ class SihnonFramework_Auth_Plugin_LDAP
     public function hasPermission(Sihnon_Auth_IUser $user, $permission) {
         return $user->hasPermission($permission);
     }
+    
+    public function listPermissions() {
+        return Sihnon_Auth_Plugin_LDAP_User::allPermissions();
+    }
+    
+    public function permission($id) {
+        return SihnonFramework_Exception_NotImplemented();
+    }
+    
     public static function ldapEscape($input_str, $for_dn = false) {
         // Taken from Douglas Davis at http://php.sihnon.net/manual/en/function.ldap-search.php#90158
         // see:

@@ -85,7 +85,7 @@ abstract class SihnonFramework_DatabaseObject {
      * 
 	 * @return SihnonFramework_DatabaseObject
      */
-    public static function all($view = null, $additional_conditions = null, $additional_params = null, $order_by = 'id', $order_dir = self::ORDER_DESC) {
+    public static function all($view = null, $additional_conditions = null, $additional_params = null, $order_by = 'id', $order_dir = self::ORDER_ASC) {
         $database = SihnonFramework_Main::instance()->database();
         
         if ($view === null) {

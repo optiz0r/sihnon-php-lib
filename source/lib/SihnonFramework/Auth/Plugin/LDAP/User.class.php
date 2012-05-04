@@ -91,6 +91,10 @@ class SihnonFramework_Auth_Plugin_LDAP_User implements Sihnon_Auth_IUser {
         return in_array($permission, $this->permissions());
     }
     
+    public function allPermissions() {
+        throw new SihnonFramework_Exception_NotImplemented();
+    }
+    
     public function permissions() {
         if ($this->groups === null) {
             $ldap_username = Sihnon_Auth_Plugin_LDAP::ldapEscape($this->username);

@@ -17,6 +17,16 @@ interface SihnonFramework_Auth_IUpdateableGroups {
     public function addGroup($groupname, $description);
     
     /**
+     * Checks whether the given group may be removed by the user
+     *
+     * Some groups may be vital for system operation, such as an administrators group
+     * 
+     * @param Sihnon_Auth_IGroup $group Group to be tested for removability
+     * @return bool Returns True if the group may be removed, false otherwise.
+     */
+    public function removable(Sihnon_Auth_IGroup $group);
+    
+    /**
      * Removes the entry for this group from the backend
      *
      * @param Sihnon_Auth_IGroup $group Group to be removed.

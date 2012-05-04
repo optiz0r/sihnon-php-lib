@@ -17,7 +17,7 @@ interface SihnonFramework_Auth_IUser {
     /**
      * Returns the username
      * 
-     * @param string Username
+     * @return string Username
      */
     public function username();
     

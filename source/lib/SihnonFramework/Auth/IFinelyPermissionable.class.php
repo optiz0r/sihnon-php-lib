@@ -26,6 +26,21 @@ interface SihnonFramework_Auth_IFinelyPermissionable extends Sihnon_Auth_IPermis
      */
     public function hasPermission(Sihnon_Auth_IUser $user, $permission);
     
+    /**
+     * Returns a list of all permissions defined in the backend
+     *
+     * @return array(Sihnon_Auth_IPermission)
+     */
+    public function listPermissions();
+    
+    /**
+     * Returns a Permission object with the given ID
+     *
+     * @param mixed $id Unique identifier for the permission to retrieve
+     * @return Sihnon_Auth_IPermission
+     */
+    public function permission($id);
+    
 }
 
 ?>

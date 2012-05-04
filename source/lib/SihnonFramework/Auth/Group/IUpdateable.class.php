@@ -24,6 +24,15 @@ interface SihnonFramework_Auth_Group_IUpdateable {
     public function delete();
     
     /**
+     * Checks whether this group may be removed by the user
+     *
+     * Some groups may be vital for system operation, such as an administrators group
+     * 
+     * @return bool Returns True if the group may be removed, false otherwise.
+     */
+    public function removable();
+    
+    /**
      * Add a user to this group in the backend
      *
      * @param Sihnon_Auth_IUser $user User to be added to the group
@@ -36,6 +45,13 @@ interface SihnonFramework_Auth_Group_IUpdateable {
      * @param Sihnon_Auth_IUser $user User to be removed from the group
      */
     public function removeUser(Sihnon_Auth_IUser $user);
+    
+    /**
+     * Adds a new permission to this group in the backend
+     *
+     * @param Sihnon_Auth_IPermission $permission Permission to be added to the group
+     */
+    public function addPermission(Sihnon_Auth_IPermission $permission);
         
 }
 
