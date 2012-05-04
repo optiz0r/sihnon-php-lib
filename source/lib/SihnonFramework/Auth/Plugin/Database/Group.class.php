@@ -98,6 +98,15 @@ class SihnonFramework_Auth_Plugin_Database_Group
     }
     
     /**
+     * Updates the group description
+     *
+     * @param string $description New group description
+     */
+    public function setDescription($description) {
+        $this->description = $description;
+    }
+    
+    /**
      * Checks whether this group may be removed by the user
      *
      * Some groups may be vital for system operation, such as an administrators group

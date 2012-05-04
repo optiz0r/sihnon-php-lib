@@ -6,12 +6,19 @@
 interface SihnonFramework_Auth_Group_IUpdateable {
 
     /**
-     * Creaates a new entry for this group in the backend
+     * Creates a new entry for this group in the backend
      * 
      * @param string $groupname Unique name for the group
      * @param string $description Text description of the purpose for this group
      */
     public static function add($groupname, $description);
+    
+    /**
+     * Updates the group description
+     *
+     * @param string $description New group description
+     */
+    public function setDescription($description);
     
     /**
      * Updates any changes to this group's information in the backend
