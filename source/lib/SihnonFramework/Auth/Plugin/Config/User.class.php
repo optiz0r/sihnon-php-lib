@@ -31,6 +31,10 @@ class SihnonFramework_Auth_Plugin_Config_User implements Sihnon_Auth_IUser {
         return static::load(static::administratorUsername());
     }
 
+    public function id() {
+        return $this->username;
+    }
+    
     public function username() {
         return $this->username;
     }
