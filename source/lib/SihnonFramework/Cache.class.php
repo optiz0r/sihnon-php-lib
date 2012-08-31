@@ -44,7 +44,7 @@ class SihnonFramework_Cache {
     
     public function store($source_filename, $content) {
         $cache_filename = $this->cacheFilename($source_filename);
-        return file_put_contents($cache_filename, $content);
+        return file_put_contents($cache_filename, serialize($content));
     }
     
     public function fetch($source_filename, $ttl = 3600) {
@@ -54,7 +54,20 @@ class SihnonFramework_Cache {
             throw new Sihnon_Exception_CacheObjectNotFound($source_filename);
         }
         
-        return file_get_contents($cache_filename);
+        return unserialize(file_get_contents($cache_filename));
+    }
+
+    public function invalidate($source_filename) {
+        $cache_filename = $this->cacheFilename($source_filename);
+        
+        // Check to see if the file is cached
+        if ( ! file_exists($cache_filename)) {
+            return false;
+        }
+        
+        unlink($cache_filename);
+
+        return true;
     }
     
 };
