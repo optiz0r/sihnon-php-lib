@@ -316,7 +316,7 @@ class SihnonFramework_Main {
      * @return string
      */
     public static function makeAbsolutePath($relative_path) {
-        if (preg_match('#^/#', $relative_path)) {
+        if (preg_match('#^(/|[a-zA-Z]:)#', $relative_path)) {
             // This path is already absolute, just canonicalise it
             return realpath($relative_path);
         }
